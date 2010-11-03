@@ -1,0 +1,21 @@
+#from Base import Base
+#extends Base
+
+#def title
+Lista de Hoteis
+#end def
+
+#def body
+
+<table>
+    <thead>
+        <tr>Nome do Hotel</tr>
+    </thead>
+    #for $hotel in $hotels
+    <tr>
+        <td>$hotel.nome</td>
+    </tr>
+    #end for
+</table>
+
+#end def

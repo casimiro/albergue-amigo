@@ -1,29 +1,43 @@
-class Zona(object):
+from elixir import *
+
+class HotelRegiao(object):
     """Enum of Zona"""
-    OESTE = 0
-    SUL = 1
-    NORTE = 2
-    LESTE = 3
+    OESTE = 'Oeste'
+    SUL = 'Sul'
+    NORTE = 'Norte'
+    LESTE = 'Leste'
 
 class HotelTipo(object):
     """Enum of hotel types """
-    FAMILIAR = 0
-    INDIVIDUAL = 1
+    FAMILIAR = 'Familiar'
+    INDIVIDUAL = 'Individual'
 
 class HotelFim(object):
     """Enum of hotel propose"""
-    NEGOCIOS = 0
-    LAZER = 1
+    NEGOCIOS = 'Business'
+    LAZER = 'Lazer'
 
-class Hotel(object):
+class Hotel(Entity):
     """This class is a model and represents a Hotel!"""
+    
+    nome = Field(Unicode(20))
+    endereco = Field(Unicode(30))
+    regiao = Field(Unicode(10))
+    classificacao = Field(Integer)
+    finalidade = Field(Unicode(10))
+    custo_diaria = Field(Float)
+    tipo = Field(Unicode(10))
+    url = Field(Unicode(30))
 
-    def __init__(self, nome, endereco, regiao, classificacao, finalidade, custo_diaria, tipo, url):
-       self.nome = nome
-       self.endereco = endereco
-       self.regiao = regiao
-       self.classificacao = classificacao
-       self.finalidade = finalidade
-       self.custo_diaria = custo_diaria
-       self.tipo = tipo
-       self.url = url
+
+    def __repr__(self):
+        return '<Hotel "%s">' % (self.__dict__)
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+def setDB(db):
+    metadata.bind = db
+    metadata.echo = True
+
+setup_all()
