@@ -9,7 +9,15 @@ from albergueamigo.view.ListHotels import ListHotels
 from albergueamigo.model.models import *
 from albergueamigo.controller.controllers import *
 
-class ControllerTest(unittest.TestCase):
+class RootControllerTest(unittest.TestCase):
+    """Class that test ControllerTest"""
+    
+    def test_index(self):
+        root_controller = RootController()
+        self.assertEquals(root_controller.index(),'Hello Bitches!')
+    
+
+class HotelControllerTest(unittest.TestCase):
     """Class that will assert the controller behavior"""
     
     def setUp(self):
@@ -17,14 +25,14 @@ class ControllerTest(unittest.TestCase):
         create_all()
 
     def test_create_hotel(self):
-        controller = Controller()
+        controller = HotelController()
         
         #Asserting that Controller returns a Form
-        result = controller.edit_hotel()
+        result = controller.edit()
         self.assertEquals(result,EditHotel().respond())
         
         #Asserting that Controller creates a Hotel
-        result = controller.edit_hotel(nome='Pocilga ZL',
+        result = controller.edit(nome='Pocilga ZL',
                                       endereco='Av. Assis Ribeiro',
                                       regiao=HotelRegiao.LESTE,
                                       classificacao=5,

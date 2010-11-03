@@ -1,4 +1,5 @@
 #from Base import Base
+#from formalchemy import FieldSet
 #extends Base
     
 #def title
@@ -9,4 +10,8 @@
 
 <h2>Editar Hotel</h2>
 
+#if $hotel is None
+#set fs = FieldSet(Hotel)
+$fs.render()
+#end if
 #end def
