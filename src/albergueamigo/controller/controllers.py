@@ -1,7 +1,11 @@
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
 import cherrypy
 from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.ListHotels import ListHotels
-from albergueamigo.model.models import Hotel
+from albergueamigo.model.models import Hotel,Session
+from formalchemy import FieldSet
 
 class HotelController(object):
     """This class will handle the hotels HTTP requests """
@@ -15,12 +19,14 @@ class HotelController(object):
                          finalidade=kwargs['finalidade'],
                          custo_diaria=kwargs['custo_diaria'],
                          url=kwargs['url'])
+            hotel.save()
+            
             return self.index()
-        return EditHotel().respond()
+        return EditHotel(searchList=[{'fs':FieldSet(Hotel).render()}]).respond()
 
     @cherrypy.expose
     def index(self):
-        hotels = Hotel.query.all()
+        hotels = Session().query(Hotel).all()
         return ListHotels(searchList=[{'hotels':hotels}]).respond()
 
 class RootController(object):
@@ -33,4 +39,11 @@ class RootController(object):
         return 'Hello Bitches!'
    
 if __name__ == '__main__':
-    cherrypy.quickstart(HotelController())
+    from sqlalchemy import create_engine
+    from albergueamigo.model.models import Session,Base
+    #Creating infrastrucrure
+    engine = create_engine('sqlite:///:memory:',echo=True)
+    Session.configure(bind=engine)
+    Base.metadata.create_all(engine)
+    
+    cherrypy.quickstart(RootController(),config='server.config')

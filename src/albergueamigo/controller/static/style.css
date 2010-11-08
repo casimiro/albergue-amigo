@@ -197,7 +197,7 @@ ul{
 	color:#847543; font:11px/12px Verdana, Arial, Helvetica, sans-serif;  font-weight:bold; background-color:#fff6d8;
 	display:block;
 	}
-#services p{
+#services p, label{
 	width:191px; display:block; font:13px Verdana, Arial, Helvetica, sans-serif; color:#799fbb; background-color:#0a2b43;
 	margin:19px 0 0 16px; background:none; padding:0; 
 	}

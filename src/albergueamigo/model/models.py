@@ -1,4 +1,9 @@
-from elixir import *
+from sqlalchemy import Column,String,Integer,Float
+from sqlalchemy.orm import sessionmaker,scoped_session
+from sqlalchemy.ext.declarative import declarative_base
+
+Session = scoped_session(sessionmaker())
+Base = declarative_base()
 
 class HotelRegiao(object):
     """Enum of Zona"""
@@ -17,17 +22,19 @@ class HotelFim(object):
     NEGOCIOS = 'Business'
     LAZER = 'Lazer'
 
-class Hotel(Entity):
+class Hotel(Base):
     """This class is a model and represents a Hotel!"""
+    __tablename__ = 'hotel'
     
-    nome = Field(Unicode(20))
-    endereco = Field(Unicode(30))
-    regiao = Field(Unicode(10))
-    classificacao = Field(Integer)
-    finalidade = Field(Unicode(10))
-    custo_diaria = Field(Float)
-    tipo = Field(Unicode(10))
-    url = Field(Unicode(30))
+    id = Column(Integer, primary_key=True)
+    nome = Column(String)
+    endereco = Column(String)
+    regiao = Column(String)
+    classificacao = Column(Integer)
+    finalidade = Column(String)
+    custo_diaria = Column(Float)
+    tipo = Column(String)
+    url = Column(String)
 
 
     def __repr__(self):
@@ -36,8 +43,7 @@ class Hotel(Entity):
     def __eq__(self, other):
         return self.id == other.id
 
-def setDB(db):
-    metadata.bind = db
-    metadata.echo = True
-
-setup_all()
+    def save(self):
+        session = Session()
+        session.add(self)
+        session.commit()

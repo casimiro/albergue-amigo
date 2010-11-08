@@ -1,9 +1,9 @@
 import sys
-
 sys.path.insert(0,'../src/')
 
 import unittest
-from elixir import *
+from sqlalchemy import create_engine
+from formalchemy import FieldSet
 from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.ListHotels import ListHotels
 from albergueamigo.model.models import *
@@ -21,15 +21,17 @@ class HotelControllerTest(unittest.TestCase):
     """Class that will assert the controller behavior"""
     
     def setUp(self):
-        setDB('sqlite:///:memory:')
-        create_all()
+        #Creating infrastrucrure
+        engine = create_engine('sqlite:///:memory:',echo=True)
+        Session.configure(bind=engine)
+        Base.metadata.create_all(engine)
 
     def test_create_hotel(self):
         controller = HotelController()
-        
+        session = Session()
         #Asserting that Controller returns a Form
         result = controller.edit()
-        self.assertEquals(result,EditHotel().respond())
+        self.assertEquals(result,EditHotel(searchList=[{'fs':FieldSet(Hotel).render()}]).respond())
         
         #Asserting that Controller creates a Hotel
         result = controller.edit(nome='Pocilga ZL',
@@ -40,7 +42,9 @@ class HotelControllerTest(unittest.TestCase):
                                       custo_diaria=20.0,
                                       tipo=HotelTipo.INDIVIDUAL, 
                                       url='')
-        hotel = Hotel.query.first()
+        hotel = session.query(Hotel).first()
         self.assertEquals(hotel.nome,'Pocilga ZL')
 
-        self.assertEquals(result,ListHotels(searchList=[{'hotels':Hotel.query.all()}]).respond())
+        self.assertEquals(result,ListHotels(searchList=[{'hotels':session.query(Hotel).all()}]).respond())
+
+unittest.main()
