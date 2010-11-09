@@ -11,6 +11,9 @@ class HotelRegiao(object):
     SUL = 'Sul'
     NORTE = 'Norte'
     LESTE = 'Leste'
+    
+    def get_values(self):
+        return {'Zona Oeste':'Oeste','Zona Sul':'Sul','Zona Norte':'Norte','Zona Leste':'Leste'}
 
 class HotelTipo(object):
     """Enum of hotel types """
