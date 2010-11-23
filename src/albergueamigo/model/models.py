@@ -1,9 +1,11 @@
 from sqlalchemy import Column,String,Integer,Float
 from sqlalchemy.orm import sessionmaker,scoped_session
 from sqlalchemy.ext.declarative import declarative_base
+from formalchemy import FieldSet,Field
 
 Session = scoped_session(sessionmaker())
 Base = declarative_base()
+
 
 class HotelRegiao(object):
     """Enum of Zona"""
@@ -39,7 +41,6 @@ class Hotel(Base):
     tipo = Column(String)
     url = Column(String)
 
-
     def __repr__(self):
         return '<Hotel "%s">' % (self.__dict__)
 
@@ -50,3 +51,8 @@ class Hotel(Base):
         session = Session()
         session.add(self)
         session.commit()
+
+HotelFieldSet = FieldSet(Hotel)
+HotelFieldSet.append(Field('regiao').dropdown(options=HotelRegiao().get_values()))
+
+

@@ -31,8 +31,8 @@ class HotelControllerTest(unittest.TestCase):
         session = Session()
         #Asserting that Controller returns a Form
         result = controller.edit()
-        self.assertEquals(result,EditHotel(searchList=[{'fs':FieldSet(Hotel).render()}]).respond())
-        
+        self.assertEquals(result,EditHotel(searchList=[{'fs':HotelFieldSet.render()}]).respond())
+                
         #Asserting that Controller creates a Hotel
         result = controller.edit(nome='Pocilga ZL',
                                       endereco='Av. Assis Ribeiro',

@@ -4,7 +4,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 import cherrypy
 from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.ListHotels import ListHotels
-from albergueamigo.model.models import Hotel,Session,HotelRegiao
+from albergueamigo.model.models import Hotel,Session,HotelRegiao,HotelFieldSet
 from formalchemy import FieldSet,Field
 
 class HotelController(object):
@@ -22,9 +22,8 @@ class HotelController(object):
             hotel.save()
             
             return self.index()
-        fs = FieldSet(Hotel)
-        fs.append(Field('regiao').dropdown(options=HotelRegiao().get_values()))
-        return EditHotel(searchList=[{'fs':fs.render()}]).respond()
+
+        return EditHotel(searchList=[{'fs':HotelFieldSet.render()}]).respond()
 
     @cherrypy.expose
     def index(self):
