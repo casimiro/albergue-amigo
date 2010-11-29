@@ -26,5 +26,7 @@ class HotelTest(unittest.TestCase):
         
         hotel_saved = Session().query(Hotel).all()[0]
         self.assertEquals(hotel,hotel_saved)
-
+    
+    def testCreateHotelForm(self):
+        fs = HotelFieldSet
 unittest.main()

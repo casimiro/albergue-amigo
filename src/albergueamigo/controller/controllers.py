@@ -11,14 +11,14 @@ class HotelController(object):
     
     @cherrypy.expose
     def edit(self, **kwargs):
-        if 'nome' in kwargs:
-            hotel = Hotel(nome=kwargs['nome'],
-                         endereco=kwargs['endereco'],
-                         regiao = kwargs['regiao'],
-                         classificacao = kwargs['classificacao'],
-                         finalidade=kwargs['finalidade'],
-                         custo_diaria=kwargs['custo_diaria'],
-                         url=kwargs['url'])
+        if 'Hotel--nome' in kwargs:
+            hotel = Hotel(nome=kwargs['Hotel--nome'],
+                         endereco=kwargs['Hotel--endereco'],
+                         regiao = kwargs['Hotel--regiao'],
+                         classificacao = kwargs['Hotel--classificacao'],
+                         finalidade=kwargs['Hotel--finalidade'],
+                         custo_diaria=kwargs['Hotel--custo_diaria'],
+                         url=kwargs['Hotel--url'])
             hotel.save()
             
             return self.index()
@@ -26,9 +26,10 @@ class HotelController(object):
         return EditHotel(searchList=[{'fs':HotelFieldSet.render()}]).respond()
 
     @cherrypy.expose
-    def index(self):
-        hotels = Session().query(Hotel).all()
-        return ListHotels(searchList=[{'hotels':hotels}]).respond()
+    def index(self, hotel_id = None):
+        if hotel_id is None:
+            hotels = Session().query(Hotel).all()
+            return ListHotels(searchList=[{'hotels':hotels}]).respond()
 
 class RootController(object):
     """This class will handle root requests"""
