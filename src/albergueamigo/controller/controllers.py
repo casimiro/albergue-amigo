@@ -4,11 +4,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 import cherrypy
 from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.ListHotels import ListHotels
-from albergueamigo.model.models import Hotel,Session,HotelRegiao,HotelFieldSet
-from formalchemy import FieldSet,Field
+from albergueamigo.model.models import *
 
 class HotelController(object):
     """This class will handle the hotels HTTP requests """
+    
     @cherrypy.expose
     def edit(self, **kwargs):
         if 'nome' in kwargs:
@@ -41,9 +41,8 @@ class RootController(object):
    
 if __name__ == '__main__':
     from sqlalchemy import create_engine
-    from albergueamigo.model.models import Session,Base
     #Creating infrastrucrure
-    engine = create_engine('sqlite:///:memory:',echo=True)
+    engine = create_engine('sqlite:///fuck.db',echo=True)
     Session.configure(bind=engine)
     Base.metadata.create_all(engine)
     

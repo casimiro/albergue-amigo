@@ -7,15 +7,8 @@ Lista de Hoteis
 
 #def body
 
-<table>
-    <thead>
-        <tr>Nome do Hotel</tr>
-    </thead>
-    #for $hotel in $hotels
-    <tr>
-        <td>$hotel.nome</td>
-    </tr>
-    #end for
-</table>
+#for $hotel in $hotels
+<p>$hotel.nome</p>
+#end for
 
 #end def
