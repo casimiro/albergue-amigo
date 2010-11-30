@@ -1,7 +1,8 @@
-from sqlalchemy import Column,String,Integer,Float
+from sqlalchemy import Column,String,Integer,Float,Date
 from sqlalchemy.orm import sessionmaker,scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from formalchemy import FieldSet,Field
+from hashed_property import HashedProperty
 
 Session = scoped_session(sessionmaker())
 Base = declarative_base()
@@ -33,8 +34,28 @@ class HotelFim(object):
     def get_values(self):
         return {'Business':'Business','Lazer':'Lazer'}
 
+class User(Base):
+    __tablename__ = 'user'
+    username = Column('username', String, primary_key=True)
+    email = Column('email', String,nullable=False)
+    password_hash = Column(String(40), nullable=False)
+    password_salt = Column(String(40), nullable=False)
+    # This is an interface to the actual password
+    password = HashedProperty('password_hash', 'password_salt',
+        # Optional function to enable generating the hash on the db side
+        dbhashfunc=(lambda pw,salt: func.sha1(pw + salt)))
+    name = Column('name',String, nullable = False)
+    cpf = Column('cpf',String)
+    creation_date = Column('creation_date', Date, nullable=False)
+    max_diaria = Column('max_diaria',Float)
+    hotel_fim = Column('hotel_fim', String)
+    
+    def save(self):
+        session = Session()
+        session.add(self)
+        session.commit()
+        
 class Hotel(Base):
-    """This class is a model and represents a Hotel!"""
     __tablename__ = 'hotel'
     
     id = Column('id',Integer, primary_key=True)
@@ -58,8 +79,14 @@ class Hotel(Base):
         session.add(self)
         session.commit()
 
+#Hotel's FieldSet
 HotelFieldSet = FieldSet(Hotel)
 HotelFieldSet.append(Field('regiao').dropdown(options=HotelRegiao().get_values()))
 HotelFieldSet.append(Field('finalidade').dropdown(options=HotelFim().get_values()))
 HotelFieldSet.append(Field('tipo').dropdown(options=HotelTipo().get_values()))
 
+#User's FieldSet
+UserFieldSet = FieldSet(User)
+UserFieldSet.configure(exclude=[UserFieldSet.creation_date])
+UserFieldSet.append(Field('password', renderer='password'))
+UserFieldSet.insert(UserFieldSet.password, Field('password2',renderer='password'))

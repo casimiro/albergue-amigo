@@ -1,4 +1,5 @@
 import sys
+from albergueamigo.view.ViewHotel import ViewHotel
 sys.path.insert(0,'../src/')
 
 import unittest
@@ -9,42 +10,53 @@ from albergueamigo.view.ListHotels import ListHotels
 from albergueamigo.model.models import *
 from albergueamigo.controller.controllers import *
 
+#Creating infrastrucrure
+engine = create_engine('sqlite:///:test.db',echo=True)
+Session.configure(bind=engine)
+Base.metadata.create_all(engine)
+
 class RootControllerTest(unittest.TestCase):
     """Class that test ControllerTest"""
     
     def test_index(self):
         root_controller = RootController()
         self.assertEquals(root_controller.index(),'Hello Bitches!')
-    
 
 class HotelControllerTest(unittest.TestCase):
     """Class that will assert the controller behavior"""
-    
-    def setUp(self):
-        #Creating infrastrucrure
-        engine = create_engine('sqlite:///:memory:',echo=True)
-        Session.configure(bind=engine)
-        Base.metadata.create_all(engine)
-
+        
     def test_create_hotel(self):
         controller = HotelController()
         session = Session()
         #Asserting that Controller returns a Form
         result = controller.edit()
         self.assertEquals(result,EditHotel(searchList=[{'fs':HotelFieldSet.render()}]).respond())
-                
         #Asserting that Controller creates a Hotel
-        result = controller.edit(nome='Pocilga ZL',
-                                      endereco='Av. Assis Ribeiro',
-                                      regiao=HotelRegiao.LESTE,
-                                      classificacao=5,
-                                      finalidade=HotelFim.NEGOCIOS,
-                                      custo_diaria=20.0,
-                                      tipo=HotelTipo.INDIVIDUAL, 
-                                      url='')
+        params = {'Hotel--nome':'Pocilga ZL',
+                                      'Hotel--endereco':'Av. Assis Ribeiro',
+                                      'Hotel--regiao':HotelRegiao.LESTE,
+                                      'Hotel--classificacao':5,
+                                      'Hotel--finalidade':HotelFim.NEGOCIOS,
+                                      'Hotel--custo_diaria':20.0,
+                                      'Hotel--tipo':HotelTipo.INDIVIDUAL, 
+                                      'Hotel--url':''}
+        result = controller.edit(**params)
         hotel = session.query(Hotel).first()
         self.assertEquals(hotel.nome,'Pocilga ZL')
-
         self.assertEquals(result,ListHotels(searchList=[{'hotels':session.query(Hotel).all()}]).respond())
-
+    
+    def test_view_hotel(self):
+        controller = HotelController()
+        hotel = Hotel(nome=u'Pocilga ZL',
+                      endereco=u'Av. Assis Ribeiro, 1000',
+                      regiao=HotelRegiao.OESTE,
+                      classificacao=5,
+                      finalidade=HotelFim.NEGOCIOS,
+                      custo_diaria = 30.0,
+                      tipo=HotelTipo.FAMILIAR,
+                      url=u'www.pocilgazl.com') 
+        hotel.save()
+        result = controller.view(hotel.id)
+        self.assertEquals(result,ViewHotel(searchList=[{'hotel':hotel}]).respond())
+        
 unittest.main()

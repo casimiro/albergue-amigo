@@ -4,7 +4,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 import cherrypy
 from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.ListHotels import ListHotels
-from albergueamigo.model.models import *
+from albergueamigo.view.ViewHotel import ViewHotel
+from albergueamigo.model.models import Hotel,HotelFieldSet,Session,Base
 
 class HotelController(object):
     """This class will handle the hotels HTTP requests """
@@ -17,23 +18,25 @@ class HotelController(object):
                          regiao = kwargs['Hotel--regiao'],
                          classificacao = kwargs['Hotel--classificacao'],
                          finalidade=kwargs['Hotel--finalidade'],
+                         tipo =kwargs['Hotel--tipo'],
                          custo_diaria=kwargs['Hotel--custo_diaria'],
                          url=kwargs['Hotel--url'])
             hotel.save()
-            
             return self.index()
-
         return EditHotel(searchList=[{'fs':HotelFieldSet.render()}]).respond()
 
     @cherrypy.expose
-    def index(self, hotel_id = None):
-        if hotel_id is None:
-            hotels = Session().query(Hotel).all()
-            return ListHotels(searchList=[{'hotels':hotels}]).respond()
-
+    def view(self, hotel_id):
+        hotel = Session().query(Hotel).get(hotel_id)
+        return ViewHotel(searchList=[{'hotel':hotel}]).respond()
+    
+    @cherrypy.expose
+    def index(self):
+        hotels = Session().query(Hotel).all()
+        return ListHotels(searchList=[{'hotels':hotels}]).respond()
+    
 class RootController(object):
     """This class will handle root requests"""
-    
     hotels = HotelController()
 
     @cherrypy.expose
@@ -42,7 +45,7 @@ class RootController(object):
    
 if __name__ == '__main__':
     from sqlalchemy import create_engine
-    #Creating infrastrucrure
+    #Creating infrastructure
     engine = create_engine('sqlite:///fuck.db',echo=True)
     Session.configure(bind=engine)
     Base.metadata.create_all(engine)
