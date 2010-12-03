@@ -22,6 +22,13 @@ class RootControllerTest(unittest.TestCase):
         root_controller = RootController()
         self.assertEquals(root_controller.index(),'Hello Bitches!')
 
+class UserControllerTest(unittest.TestCase):
+    
+    def test_user_creation(self):
+        controller = UserController()
+        result = controller.edit()
+        self.assertEquals(EditUser(searchList=[{'fs':UserFieldSet.render()}]))
+
 class HotelControllerTest(unittest.TestCase):
     """Class that will assert the controller behavior"""
         

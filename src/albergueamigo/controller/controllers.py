@@ -3,9 +3,16 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 import cherrypy
 from albergueamigo.view.EditHotel import EditHotel
+from albergueamigo.view.EditUser import EditUser
 from albergueamigo.view.ListHotels import ListHotels
 from albergueamigo.view.ViewHotel import ViewHotel
-from albergueamigo.model.models import Hotel,HotelFieldSet,Session,Base
+from albergueamigo.model.models import Hotel,HotelFieldSet,Session,Base,UserFieldSet
+
+class UserController(object):
+    
+    @cherrypy.expose
+    def edit(self):
+        return EditUser(searchList=[{'fs':UserFieldSet.render()}])
 
 class HotelController(object):
     """This class will handle the hotels HTTP requests """

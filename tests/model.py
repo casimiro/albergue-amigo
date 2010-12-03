@@ -32,11 +32,14 @@ class UserTest(unittest.TestCase):
         user_fs = UserFieldSet
         keys = user_fs.render_fields.keys()
         self.assertTrue('name' in keys)
-        self.assertFalse(user_fs.password == None)
-        self.assertFalse(user_fs.password2 == None)
-        self.assertFalse(user_fs.email == None)
-        self.assertFalse(user_fs.max_diaria == None)
+        self.assertTrue('password' in keys)
+        self.assertTrue('password2' in keys)
+        self.assertTrue('email' in keys)
+        self.assertTrue('max_diaria' in keys)
+        self.assertTrue('cpf' in keys)
         self.assertFalse('creation_date' in keys)
+        
+        print user_fs.render()
         
 class HotelTest(unittest.TestCase):
     """This class just test the class Hotel!"""

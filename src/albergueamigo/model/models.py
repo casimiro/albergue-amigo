@@ -36,19 +36,18 @@ class HotelFim(object):
 
 class User(Base):
     __tablename__ = 'user'
+    
     username = Column('username', String, primary_key=True)
     email = Column('email', String,nullable=False)
-    password_hash = Column(String(40), nullable=False)
-    password_salt = Column(String(40), nullable=False)
-    # This is an interface to the actual password
-    password = HashedProperty('password_hash', 'password_salt',
-        # Optional function to enable generating the hash on the db side
-        dbhashfunc=(lambda pw,salt: func.sha1(pw + salt)))
+    password = Column('password', String(40), nullable=False)
     name = Column('name',String, nullable = False)
     cpf = Column('cpf',String)
     creation_date = Column('creation_date', Date, nullable=False)
     max_diaria = Column('max_diaria',Float)
     hotel_fim = Column('hotel_fim', String)
+    
+    def __repr__(self):
+        return '<User "%s">' % (self.__dict__)
     
     def save(self):
         session = Session()
