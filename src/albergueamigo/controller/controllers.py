@@ -3,6 +3,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 import cherrypy
 import datetime
+from sqlalchemy import and_
+from albergueamigo.view.UserPage import UserPage
 from albergueamigo.view.UserLogin import UserLogin
 from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.EditUser import EditUser
@@ -24,9 +26,21 @@ class UserController(object):
                         creation_date = datetime.date.today(),
                         cpf = kwargs['User--cpf'])
             user.save()
-            return UserLogin().respond()
+            return self.login()
         return EditUser(searchList=[{'fs':UserFieldSet.render()}]).respond()
-
+    
+    @cherrypy.expose
+    def login(self, **kwargs):
+        if 'username' in kwargs:
+            user = Session.query(User).filter(and_(User.username==kwargs['username'],User.password==kwargs['password']))
+            
+            if user is not None and user.count() == 1:
+                return UserPage(searchList=[{'user':user.first()}]).respond()
+            else:
+                return self.login()
+                
+        return UserLogin().respond()
+    
 class HotelController(object):
     """This class will handle the hotels HTTP requests """
     

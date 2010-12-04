@@ -4,6 +4,7 @@ sys.path.insert(0,'../src/')
 import unittest
 from sqlalchemy import create_engine
 from formalchemy import FieldSet
+from albergueamigo.view.UserPage import UserPage
 from albergueamigo.view.UserLogin import UserLogin
 from albergueamigo.view.ViewHotel import ViewHotel
 from albergueamigo.view.EditHotel import EditHotel
@@ -13,7 +14,7 @@ from albergueamigo.controller.controllers import *
 
 #Creating infrastrucrure
 os.remove(':test.db')
-engine = create_engine('sqlite:///:test.db',echo=True)
+engine = create_engine('sqlite:///:test.db',echo=False)
 Session.configure(bind=engine)
 Base.metadata.create_all(engine)
 
@@ -32,10 +33,15 @@ class RootControllerTest(unittest.TestCase):
 
 class UserControllerTest(unittest.TestCase):
     
+    def setUp(self):
+        #Clearing the mess
+        Session.query(User).delete()
+        Session.query(Hotel).delete()
+    
     def test_user_creation(self):
         controller = UserController()
-        result = controller.edit()
-        self.assertEquals(EditUser(searchList=[{'fs':UserFieldSet.render()}]).respond(), result)
+        
+        self.assertEquals(EditUser(searchList=[{'fs':UserFieldSet.render()}]).respond(), controller.edit())
         
         params = {'User--name':'Caio Casimiro', 
                   'User--username':'casimiro',
@@ -44,11 +50,31 @@ class UserControllerTest(unittest.TestCase):
                   'User--cpf':'35900763803',
                   'User--max_diaria': 150.0,
                   'User--hotel_fim':'Business'}
-        result = controller.edit(**params)
-        self.assertEquals(UserLogin().respond(),result)
+        
+        self.assertEquals(UserLogin().respond(),controller.edit(**params))
         
         user = Session().query(User).first()
         self.assertEquals('Caio Casimiro',user.name)
+        
+    def test_login(self):
+        controller = UserController()
+        user = User(username='fulano',
+                    email='teste@gmail.com',
+                    password='teste',
+                    creation_date=datetime.date.today(),
+                    name='Fulano de Tal',
+                    cpf='35900763803',
+                    max_diaria=20,
+                    hotel_fim=HotelFim.NEGOCIOS
+                    )
+        user.save()
+        
+        self.assertEquals(controller.login(),UserLogin().respond())
+        
+        params = {'username':'fulano','password':'teste'}
+        result = controller.login(**params)
+        
+        self.assertEquals(UserPage(searchList=[{'user':user}]).respond(),result)
         
 class HotelControllerTest(unittest.TestCase):
     """Class that will assert the controller behavior"""
