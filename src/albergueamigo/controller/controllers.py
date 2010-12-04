@@ -2,17 +2,30 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 import cherrypy
+import datetime
+from albergueamigo.view.UserLogin import UserLogin
 from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.EditUser import EditUser
 from albergueamigo.view.ListHotels import ListHotels
 from albergueamigo.view.ViewHotel import ViewHotel
-from albergueamigo.model.models import Hotel,HotelFieldSet,Session,Base,UserFieldSet
+from albergueamigo.model.models import Hotel,HotelFieldSet,Session,Base,UserFieldSet,User
 
 class UserController(object):
     
     @cherrypy.expose
-    def edit(self):
-        return EditUser(searchList=[{'fs':UserFieldSet.render()}])
+    def edit(self, **kwargs):
+        if 'User--name' in kwargs:
+            user = User(name = kwargs['User--name'],
+                        email = kwargs['User--email'],
+                        password = kwargs['User--password'],
+                        username = kwargs['User--username'],
+                        max_diaria = kwargs['User--max_diaria'],
+                        hotel_fim = kwargs['User--hotel_fim'],
+                        creation_date = datetime.date.today(),
+                        cpf = kwargs['User--cpf'])
+            user.save()
+            return UserLogin().respond()
+        return EditUser(searchList=[{'fs':UserFieldSet.render()}]).respond()
 
 class HotelController(object):
     """This class will handle the hotels HTTP requests """
@@ -45,6 +58,7 @@ class HotelController(object):
 class RootController(object):
     """This class will handle root requests"""
     hotels = HotelController()
+    users = UserController()
 
     @cherrypy.expose
     def index(self):

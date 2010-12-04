@@ -1,16 +1,18 @@
-import sys
-from albergueamigo.view.ViewHotel import ViewHotel
+import sys,os
 sys.path.insert(0,'../src/')
 
 import unittest
 from sqlalchemy import create_engine
 from formalchemy import FieldSet
+from albergueamigo.view.UserLogin import UserLogin
+from albergueamigo.view.ViewHotel import ViewHotel
 from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.ListHotels import ListHotels
 from albergueamigo.model.models import *
 from albergueamigo.controller.controllers import *
 
 #Creating infrastrucrure
+os.remove(':test.db')
 engine = create_engine('sqlite:///:test.db',echo=True)
 Session.configure(bind=engine)
 Base.metadata.create_all(engine)
@@ -21,14 +23,33 @@ class RootControllerTest(unittest.TestCase):
     def test_index(self):
         root_controller = RootController()
         self.assertEquals(root_controller.index(),'Hello Bitches!')
+        
+    def test_mappings(self):
+        #Hotels
+        self.assertEquals(type(RootController().hotels),type(HotelController()))
+        #Users
+        self.assertEquals(type(RootController().users),type(UserController()))
 
 class UserControllerTest(unittest.TestCase):
     
     def test_user_creation(self):
         controller = UserController()
         result = controller.edit()
-        self.assertEquals(EditUser(searchList=[{'fs':UserFieldSet.render()}]))
-
+        self.assertEquals(EditUser(searchList=[{'fs':UserFieldSet.render()}]).respond(), result)
+        
+        params = {'User--name':'Caio Casimiro', 
+                  'User--username':'casimiro',
+                  'User--email': 'caiorcasimiro@gmail.com',
+                  'User--password':'teste',
+                  'User--cpf':'35900763803',
+                  'User--max_diaria': 150.0,
+                  'User--hotel_fim':'Business'}
+        result = controller.edit(**params)
+        self.assertEquals(UserLogin().respond(),result)
+        
+        user = Session().query(User).first()
+        self.assertEquals('Caio Casimiro',user.name)
+        
 class HotelControllerTest(unittest.TestCase):
     """Class that will assert the controller behavior"""
         

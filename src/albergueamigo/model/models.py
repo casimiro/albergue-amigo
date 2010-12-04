@@ -1,7 +1,7 @@
 from sqlalchemy import Column,String,Integer,Float,Date
 from sqlalchemy.orm import sessionmaker,scoped_session
 from sqlalchemy.ext.declarative import declarative_base
-from formalchemy import FieldSet,Field
+from formalchemy import FieldSet,Field,PasswordFieldRenderer
 from hashed_property import HashedProperty
 
 Session = scoped_session(sessionmaker())
@@ -37,14 +37,15 @@ class HotelFim(object):
 class User(Base):
     __tablename__ = 'user'
     
-    username = Column('username', String, primary_key=True)
-    email = Column('email', String,nullable=False)
-    password = Column('password', String(40), nullable=False)
-    name = Column('name',String, nullable = False)
-    cpf = Column('cpf',String)
-    creation_date = Column('creation_date', Date, nullable=False)
-    max_diaria = Column('max_diaria',Float)
-    hotel_fim = Column('hotel_fim', String)
+    id = Column('id',Integer, primary_key=True)
+    name = Column(String, nullable = False)
+    username = Column(String)
+    email = Column(String,nullable=False)
+    password = Column(String(40), nullable=False)
+    cpf = Column(String)
+    creation_date = Column(Date, nullable=False)
+    max_diaria = Column(Float)
+    hotel_fim = Column(String)
     
     def __repr__(self):
         return '<User "%s">' % (self.__dict__)
@@ -86,6 +87,6 @@ HotelFieldSet.append(Field('tipo').dropdown(options=HotelTipo().get_values()))
 
 #User's FieldSet
 UserFieldSet = FieldSet(User)
+UserFieldSet.insert_after(UserFieldSet.password, Field(name='password2').with_renderer(PasswordFieldRenderer))
+UserFieldSet.append(Field(name='password').with_renderer(PasswordFieldRenderer))
 UserFieldSet.configure(exclude=[UserFieldSet.creation_date])
-UserFieldSet.append(Field('password', renderer='password'))
-UserFieldSet.insert(UserFieldSet.password, Field('password2',renderer='password'))

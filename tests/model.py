@@ -37,9 +37,9 @@ class UserTest(unittest.TestCase):
         self.assertTrue('email' in keys)
         self.assertTrue('max_diaria' in keys)
         self.assertTrue('cpf' in keys)
+        self.assertTrue('username' in keys)
         self.assertFalse('creation_date' in keys)
         
-        print user_fs.render()
         
 class HotelTest(unittest.TestCase):
     """This class just test the class Hotel!"""
