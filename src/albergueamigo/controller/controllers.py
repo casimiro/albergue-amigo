@@ -1,9 +1,11 @@
+# -*- coding: UTF-8 -*-
 import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 import cherrypy
 import datetime
 from sqlalchemy import and_
+from albergueamigo.view.Index import Index
 from albergueamigo.view.UserPage import UserPage
 from albergueamigo.view.UserLogin import UserLogin
 from albergueamigo.view.EditHotel import EditHotel
@@ -76,7 +78,7 @@ class RootController(object):
 
     @cherrypy.expose
     def index(self):
-        return 'Hello Bitches!'
+        return Index().respond()
    
 if __name__ == '__main__':
     from sqlalchemy import create_engine

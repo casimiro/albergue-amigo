@@ -4,6 +4,7 @@ sys.path.insert(0,'../src/')
 import unittest
 from sqlalchemy import create_engine
 from formalchemy import FieldSet
+from albergueamigo.view.Index import Index
 from albergueamigo.view.UserPage import UserPage
 from albergueamigo.view.UserLogin import UserLogin
 from albergueamigo.view.ViewHotel import ViewHotel
@@ -23,7 +24,7 @@ class RootControllerTest(unittest.TestCase):
     
     def test_index(self):
         root_controller = RootController()
-        self.assertEquals(root_controller.index(),'Hello Bitches!')
+        self.assertEquals(root_controller.index(),Index().respond())
         
     def test_mappings(self):
         #Hotels
