@@ -1,10 +1,8 @@
 #from Base import Base
 #extends Base
 
-<h2>Lista de Hoteis</h2>
-
 #def body
-
+<h2>Lista de Hoteis</h2>
 #for $hotel in $hotels
 <p><a href="/hotels/view/$hotel.id">$hotel.nome</a></p>
 #end for
