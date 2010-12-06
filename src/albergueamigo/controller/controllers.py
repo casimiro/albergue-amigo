@@ -21,7 +21,7 @@ class TouristicSiteController(object):
     @cherrypy.expose
     def index(self):
         site = Session().query(TouristicSite).all()
-        return ListTouristicSites(searchList=[{'sites':site}]).respond()
+        return ListTouristicSites(searchList=[{'last_hotels':get_last_hotels(),'sites':site}]).respond()
     
     @cherrypy.expose
     def edit(self, **kwargs):
@@ -33,7 +33,7 @@ class TouristicSiteController(object):
                                  url=kwargs['TouristicSite--url'])
             site.save()
             return self.index()
-        return EditTouristicSite(searchList=[{'fs':TouristicSiteFieldSet.render()}]).respond()
+        return EditTouristicSite(searchList=[{'last_hotels':get_last_hotels(),'fs':TouristicSiteFieldSet.render()}]).respond()
 
 class UserController(object):
     
@@ -50,7 +50,7 @@ class UserController(object):
                         cpf = kwargs['User--cpf'])
             user.save()
             return self.login()
-        return EditUser(searchList=[{'fs':UserFieldSet.render()}]).respond()
+        return EditUser(searchList=[{'last_hotels':get_last_hotels(),'fs':UserFieldSet.render()}]).respond()
     
     @cherrypy.expose
     def login(self, **kwargs):
@@ -58,11 +58,11 @@ class UserController(object):
             user = Session.query(User).filter(and_(User.username==kwargs['username'],User.password==kwargs['password']))
             
             if user is not None and user.count() == 1:
-                return UserPage(searchList=[{'user':user.first()}]).respond()
+                return UserPage(searchList=[{'last_hotels':get_last_hotels(),'user':user.first()}]).respond()
             else:
                 return self.login()
                 
-        return UserLogin().respond()
+        return UserLogin(searchList=[{'last_hotels':get_last_hotels()}]).respond()
     
 class HotelController(object):
     """This class will handle the hotels HTTP requests """
@@ -80,17 +80,17 @@ class HotelController(object):
                          url=kwargs['Hotel--url'])
             hotel.save()
             return self.index()
-        return EditHotel(searchList=[{'fs':HotelFieldSet.render()}]).respond()
+        return EditHotel(searchList=[{'last_hotels':get_last_hotels(),'fs':HotelFieldSet.render()}]).respond()
 
     @cherrypy.expose
     def view(self, hotel_id):
         hotel = Session().query(Hotel).get(hotel_id)
-        return ViewHotel(searchList=[{'hotel':hotel}]).respond()
+        return ViewHotel(searchList=[{'last_hotels':get_last_hotels(),'hotel':hotel}]).respond()
     
     @cherrypy.expose
     def index(self):
         hotels = Session().query(Hotel).all()
-        return ListHotels(searchList=[{'hotels':hotels}]).respond()
+        return ListHotels(searchList=[{'last_hotels':get_last_hotels(),'hotels':hotels}]).respond()
     
 class RootController(object):
     """This class will handle root requests"""
@@ -100,7 +100,7 @@ class RootController(object):
     
     @cherrypy.expose
     def index(self):
-        return Index().respond()
+        return Index(searchList=[{'last_hotels':get_last_hotels()}]).respond()
    
 if __name__ == '__main__':
     from sqlalchemy import create_engine

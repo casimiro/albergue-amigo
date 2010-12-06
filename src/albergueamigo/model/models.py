@@ -94,6 +94,10 @@ class Hotel(Base):
         session.add(self)
         session.commit()
 
+#This function returns the last 5 hotels stored in the system
+def get_last_hotels():
+    return Session().query(Hotel).all()[-5:]
+
 #Hotel's FieldSet
 HotelFieldSet = FieldSet(Hotel)
 HotelFieldSet.append(Field('regiao').dropdown(options=HotelRegiao().get_values()))

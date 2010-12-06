@@ -7,7 +7,7 @@ from sqlalchemy import *
 sys.path.insert(0,'../src/')
 from albergueamigo.model.models import *
 
-engine = create_engine('sqlite:///:memory:',echo=True)
+engine = create_engine('sqlite:///:memory:',echo=False)
 Session.configure(bind=engine)
 Base.metadata.create_all(engine)
 
@@ -66,6 +66,9 @@ class UserTest(unittest.TestCase):
 class HotelTest(unittest.TestCase):
     """This class just test the class Hotel!"""
     
+    def setUp(self):
+        Session().query(Hotel).delete()
+    
     def test_create_hotel(self):
         #Creating infrastrucrure
         hotel = Hotel(nome=u'Pocilga ZL',
@@ -83,4 +86,47 @@ class HotelTest(unittest.TestCase):
     
     def testCreateHotelForm(self):
         fs = HotelFieldSet
+        
+    def test_get_last_hotels(self):
+        #This method must return the 5 last hotels in the system
+        hotel = Hotel(nome=u'Pocilga ZL',
+                      endereco=u'Av. Assis Ribeiro, 1000',
+                      regiao=HotelRegiao.OESTE,
+                      classificacao=5,
+                      finalidade=HotelFim.NEGOCIOS,
+                      custo_diaria = 30.0,
+                      tipo=HotelTipo.FAMILIAR,
+                      url=u'www.pocilgazl.com') 
+        hotel.save()
+        hotel2 = Hotel(nome=u'Pocilga ZO',
+                      endereco=u'Av. Assis Ribeiro, 1000',
+                      regiao=HotelRegiao.OESTE,
+                      classificacao=5,
+                      finalidade=HotelFim.NEGOCIOS,
+                      custo_diaria = 30.0,
+                      tipo=HotelTipo.FAMILIAR,
+                      url=u'www.pocilgazl.com') 
+        hotel2.save()
+        hotel3 = Hotel(nome=u'Pocilga ZS',
+                      endereco=u'Av. Assis Ribeiro, 1000',
+                      regiao=HotelRegiao.OESTE,
+                      classificacao=5,
+                      finalidade=HotelFim.NEGOCIOS,
+                      custo_diaria = 30.0,
+                      tipo=HotelTipo.FAMILIAR,
+                      url=u'www.pocilgazl.com') 
+        hotel3.save()
+        hotel4 = Hotel(nome=u'Pocilga ZN',
+                      endereco=u'Av. Assis Ribeiro, 1000',
+                      regiao=HotelRegiao.OESTE,
+                      classificacao=5,
+                      finalidade=HotelFim.NEGOCIOS,
+                      custo_diaria = 30.0,
+                      tipo=HotelTipo.FAMILIAR,
+                      url=u'www.pocilgazl.com') 
+        hotel4.save()
+        
+        hotels = get_last_hotels()
+        print hotels
+        self.assertEquals(len(hotels),4)
 unittest.main()

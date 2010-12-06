@@ -27,7 +27,7 @@ class RootControllerTest(unittest.TestCase):
     
     def test_index(self):
         root_controller = RootController()
-        self.assertEquals(root_controller.index(),Index().respond())
+        self.assertEquals(root_controller.index(),Index(searchList=[{'last_hotels':get_last_hotels()}]).respond())
         
     def test_mappings(self):
         #Hotels
@@ -41,7 +41,7 @@ class TouristicSiteControllerTest(unittest.TestCase):
     
     def test_touristic_site_creation(self):
         controller = TouristicSiteController()
-        self.assertEquals(controller.edit(),EditTouristicSite(searchList=[{'fs':TouristicSiteFieldSet.render()}]).respond())
+        self.assertEquals(controller.edit(),EditTouristicSite(searchList=[{'last_hotels':get_last_hotels(),'fs':TouristicSiteFieldSet.render()}]).respond())
         
         params = {'TouristicSite--name':'EACH-USP',
                   'TouristicSite--value':0.0,
@@ -68,7 +68,7 @@ class TouristicSiteControllerTest(unittest.TestCase):
                              url='www.each.usp.br')
         site.save()
         sites = Session().query(TouristicSite).all()
-        self.assertEquals(controller.index(),ListTouristicSites(searchList=[{'sites':sites}]).respond())
+        self.assertEquals(controller.index(),ListTouristicSites(searchList=[{'last_hotels':get_last_hotels(),'sites':sites}]).respond())
         
 class UserControllerTest(unittest.TestCase):
     
@@ -80,7 +80,7 @@ class UserControllerTest(unittest.TestCase):
     def test_user_creation(self):
         controller = UserController()
         
-        self.assertEquals(EditUser(searchList=[{'fs':UserFieldSet.render()}]).respond(), controller.edit())
+        self.assertEquals(EditUser(searchList=[{'last_hotels':get_last_hotels(),'fs':UserFieldSet.render()}]).respond(), controller.edit())
         
         params = {'User--name':'Caio Casimiro', 
                   'User--username':'casimiro',
@@ -90,7 +90,7 @@ class UserControllerTest(unittest.TestCase):
                   'User--max_diaria': 150.0,
                   'User--hotel_fim':'Business'}
         
-        self.assertEquals(UserLogin().respond(),controller.edit(**params))
+        self.assertEquals(controller.login(),controller.edit(**params))
         
         user = Session().query(User).first()
         self.assertEquals('Caio Casimiro',user.name)
@@ -108,12 +108,12 @@ class UserControllerTest(unittest.TestCase):
                     )
         user.save()
         
-        self.assertEquals(controller.login(),UserLogin().respond())
+        self.assertEquals(controller.login(),UserLogin(searchList=[{'last_hotels':get_last_hotels()}]).respond())
         
         params = {'username':'fulano','password':'teste'}
         result = controller.login(**params)
         
-        self.assertEquals(UserPage(searchList=[{'user':user}]).respond(),result)
+        self.assertEquals(UserPage(searchList=[{'last_hotels':get_last_hotels(),'user':user}]).respond(),result)
         
 class HotelControllerTest(unittest.TestCase):
     """Class that will assert the controller behavior"""
@@ -123,7 +123,7 @@ class HotelControllerTest(unittest.TestCase):
         session = Session()
         #Asserting that Controller returns a Form
         result = controller.edit()
-        self.assertEquals(result,EditHotel(searchList=[{'fs':HotelFieldSet.render()}]).respond())
+        self.assertEquals(result,EditHotel(searchList=[{'last_hotels':get_last_hotels(),'fs':HotelFieldSet.render()}]).respond())
         #Asserting that Controller creates a Hotel
         params = {'Hotel--nome':'Pocilga ZL',
                                       'Hotel--endereco':'Av. Assis Ribeiro',
@@ -136,7 +136,7 @@ class HotelControllerTest(unittest.TestCase):
         result = controller.edit(**params)
         hotel = session.query(Hotel).first()
         self.assertEquals(hotel.nome,'Pocilga ZL')
-        self.assertEquals(result,ListHotels(searchList=[{'hotels':session.query(Hotel).all()}]).respond())
+        self.assertEquals(result,ListHotels(searchList=[{'last_hotels':get_last_hotels(),'hotels':session.query(Hotel).all()}]).respond())
     
     def test_view_hotel(self):
         controller = HotelController()
@@ -150,6 +150,6 @@ class HotelControllerTest(unittest.TestCase):
                       url=u'www.pocilgazl.com') 
         hotel.save()
         result = controller.view(hotel.id)
-        self.assertEquals(result,ViewHotel(searchList=[{'hotel':hotel}]).respond())
+        self.assertEquals(result,ViewHotel(searchList=[{'last_hotels':get_last_hotels(),'hotel':hotel}]).respond())
         
 unittest.main()

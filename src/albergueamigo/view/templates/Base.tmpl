@@ -22,14 +22,14 @@ Description: A two-column fixed-width template suitable for small business websi
 <body>
 <div id="header">
 	<div id="logo">
-		<h1><a href="#">Albergue Amigo</a></h1>
+		<h1><a href="/">Albergue Amigo</a></h1>
 		<h2>NÃ³s sabemos o que vocÃª merece</h2>
 	</div>
 	<div id="menu">
 		<ul>
-			<li class="active"><a href="#" accesskey="H" title="Home"><b>H</b>ome</a></li>
-			<li><a href="#" accesskey="E" title="Encontre seu canto"><b>E</b>ncontre seu canto</a></li>
-
+			<li class="active"><a href="/" accesskey="H" title="Home"><b>H</b>ome</a></li>
+			<li><a href="/hotels/" accesskey="E" title="Encontre seu canto"><b>E</b>ncontre seu canto</a></li>
+			<li><a href="/sites/" accesskey="P" title="Pocilgas Turisticas"><b>P</b>ocilgas Turisticas</a></li>
 		</ul>
 	</div>
 </div>
@@ -43,18 +43,12 @@ Description: A two-column fixed-width template suitable for small business websi
 			<h2 class="title">Ãltimos hotÃ©is</h2>
 			<div class="content">
 				<ul>
+					#for $hotel in $last_hotels
 					<li>
-						<h3>April 12th: <a href="#">Lorem Ipsum Dolor</a></h3>
-						<p>In posuere eleifend odio quisque semper augue mattis wisi maecenas ligula. <a href="#">Read more&hellip;</a></p>
+						<h3><a href="/hotels/view/$hotel.id">$hotel.nome</a></h3>
+						<p>$hotel.endereco</p>
 					</li>
-					<li>
-						<h3>April 3rd: <a href="#">Sagittis Et Convallis</a></h3>
-						<p>Donec leo, vivamus fermentum nibh in augue praesent lorem ipsum dolor a lacus at urna congue rutrum. <a href="#">Read more&hellip;</a></p>
-					</li>
-					<li>
-						<h3>April 1st: <a href="#">Integer Nisl Risus</a></h3>
-						<p>Quisque dictum integer nisl risus, sagittis convallis, rutrum id, congue, and nibh. <a href="#">Read more&hellip;</a></p>
-					</li>
+					#end for
 				</ul>
 			</div>
 		</div>
