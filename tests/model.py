@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import sys
 import unittest
 import datetime
@@ -10,6 +11,27 @@ engine = create_engine('sqlite:///:memory:',echo=True)
 Session.configure(bind=engine)
 Base.metadata.create_all(engine)
 
+class TouristicSiteTest(unittest.TestCase):
+    
+    def test_touristic_site_creation(self):
+        site = TouristicSite(name='EACH-USP',
+                             value=0.0,
+                             hours='8h-18h',
+                             address=u'Av. Assis Ribeiro,1000 - São Miguel Paulista',
+                             url='www.each.usp.br')
+        site.save()
+        site_saved = Session().query(TouristicSite).first()
+        self.assertEquals(site,site_saved)
+        
+    def test_touristic_site_field_set(self):
+        site_fs = TouristicSiteFieldSet
+        keys = site_fs.render_fields.keys()
+        self.assertTrue('name' in keys)
+        self.assertTrue('value' in keys)
+        self.assertTrue('hours' in keys)
+        self.assertTrue('address' in keys)
+        self.assertTrue('url' in keys)
+        
 class UserTest(unittest.TestCase):
     
     def test_user_creation(self):

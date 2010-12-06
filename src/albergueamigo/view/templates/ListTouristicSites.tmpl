@@ -1,0 +1,13 @@
+#encoding UTF-8
+#from Base import Base
+#extends Base
+
+<h2>Lista de Sítios Turísticos</h2>
+
+#def body
+
+#for $site in $sites
+<p><a href="/sites/view/$site.id">$site.name</a></p>
+#end for
+
+#end def

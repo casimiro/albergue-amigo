@@ -34,6 +34,21 @@ class HotelFim(object):
     def get_values(self):
         return {'Business':'Business','Lazer':'Lazer'}
 
+class TouristicSite(Base):
+    __tablename__ = 'site'
+    
+    id = Column('id',Integer, primary_key=True)
+    name = Column(String, nullable = False)
+    value = Column(Float)
+    hours = Column(String, nullable = False)
+    address = Column(String, nullable = False)
+    url = Column(String)
+    
+    def save(self):
+        session = Session()
+        session.add(self)
+        session.commit()
+    
 class User(Base):
     __tablename__ = 'user'
     
@@ -91,3 +106,7 @@ UserFieldSet.insert_after(UserFieldSet.password, Field(name='password2').with_re
 UserFieldSet.append(Field(name='password').with_renderer(PasswordFieldRenderer))
 UserFieldSet.append(Field('hotel_fim').dropdown(options=HotelFim().get_values()))
 UserFieldSet.configure(exclude=[UserFieldSet.creation_date])
+
+#TouristicSite's FieldSet
+TouristicSiteFieldSet = FieldSet(TouristicSite)
+

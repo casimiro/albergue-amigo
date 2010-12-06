@@ -1,9 +1,12 @@
+# -*- coding: UTF-8 -*-
 import sys,os
 sys.path.insert(0,'../src/')
 
 import unittest
 from sqlalchemy import create_engine
 from formalchemy import FieldSet
+from albergueamigo.view.ListTouristicSites import ListTouristicSites
+from albergueamigo.view.EditTouristicSite import EditTouristicSite
 from albergueamigo.view.Index import Index
 from albergueamigo.view.UserPage import UserPage
 from albergueamigo.view.UserLogin import UserLogin
@@ -31,7 +34,42 @@ class RootControllerTest(unittest.TestCase):
         self.assertEquals(type(RootController().hotels),type(HotelController()))
         #Users
         self.assertEquals(type(RootController().users),type(UserController()))
+        #TouristicSites
+        self.assertEquals(type(RootController().sites),type(TouristicSiteController()))
+        
+class TouristicSiteControllerTest(unittest.TestCase):
+    
+    def test_touristic_site_creation(self):
+        controller = TouristicSiteController()
+        self.assertEquals(controller.edit(),EditTouristicSite(searchList=[{'fs':TouristicSiteFieldSet.render()}]).respond())
+        
+        params = {'TouristicSite--name':'EACH-USP',
+                  'TouristicSite--value':0.0,
+                  'TouristicSite--hours':'8h-18h',
+                  'TouristicSite--address':'Av. Assis Ribeiro',
+                  'TouristicSite--url':'www.each.usp.br'}
+        result = controller.edit(**params)
+        self.assertEquals(controller.index(),result)
+        
+        saved_site = Session().query(TouristicSite).first()
+        
+        self.assertEquals('EACH-USP',saved_site.name)
+        self.assertEquals(0.0,saved_site.value)
+        self.assertEquals('8h-18h',saved_site.hours)
+        self.assertEquals('Av. Assis Ribeiro',saved_site.address)
+        self.assertEquals('www.each.usp.br',saved_site.url)
 
+    def test_touristic_site_index(self):
+        controller = TouristicSiteController()
+        site = TouristicSite(name='EACH-USP',
+                             value=0.0,
+                             hours='8h-18h',
+                             address=u'Av. Assis Ribeiro,1000 - São Miguel Paulista',
+                             url='www.each.usp.br')
+        site.save()
+        sites = Session().query(TouristicSite).all()
+        self.assertEquals(controller.index(),ListTouristicSites(searchList=[{'sites':sites}]).respond())
+        
 class UserControllerTest(unittest.TestCase):
     
     def setUp(self):

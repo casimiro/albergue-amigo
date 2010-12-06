@@ -5,6 +5,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 import cherrypy
 import datetime
 from sqlalchemy import and_
+from albergueamigo.view.ListTouristicSites import ListTouristicSites
+from albergueamigo.view.EditTouristicSite import EditTouristicSite
 from albergueamigo.view.Index import Index
 from albergueamigo.view.UserPage import UserPage
 from albergueamigo.view.UserLogin import UserLogin
@@ -12,7 +14,26 @@ from albergueamigo.view.EditHotel import EditHotel
 from albergueamigo.view.EditUser import EditUser
 from albergueamigo.view.ListHotels import ListHotels
 from albergueamigo.view.ViewHotel import ViewHotel
-from albergueamigo.model.models import Hotel,HotelFieldSet,Session,Base,UserFieldSet,User
+from albergueamigo.model.models import *
+
+class TouristicSiteController(object):
+    
+    @cherrypy.expose
+    def index(self):
+        site = Session().query(TouristicSite).all()
+        return ListTouristicSites(searchList=[{'sites':site}]).respond()
+    
+    @cherrypy.expose
+    def edit(self, **kwargs):
+        if 'TouristicSite--name' in kwargs:
+            site = TouristicSite(name=kwargs['TouristicSite--name'],
+                                 value=kwargs['TouristicSite--value'],
+                                 hours=kwargs['TouristicSite--hours'],
+                                 address=kwargs['TouristicSite--address'],
+                                 url=kwargs['TouristicSite--url'])
+            site.save()
+            return self.index()
+        return EditTouristicSite(searchList=[{'fs':TouristicSiteFieldSet.render()}]).respond()
 
 class UserController(object):
     
@@ -75,7 +96,8 @@ class RootController(object):
     """This class will handle root requests"""
     hotels = HotelController()
     users = UserController()
-
+    sites = TouristicSiteController()
+    
     @cherrypy.expose
     def index(self):
         return Index().respond()
