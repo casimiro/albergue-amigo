@@ -47,6 +47,7 @@ class TouristicSiteControllerTest(unittest.TestCase):
                   'TouristicSite--value':0.0,
                   'TouristicSite--hours':'8h-18h',
                   'TouristicSite--address':'Av. Assis Ribeiro',
+                  'TouristicSite--cep':'05419-001',
                   'TouristicSite--url':'www.each.usp.br'}
         result = controller.edit(**params)
         self.assertEquals(controller.index(),result)
@@ -65,6 +66,7 @@ class TouristicSiteControllerTest(unittest.TestCase):
                              value=0.0,
                              hours='8h-18h',
                              address=u'Av. Assis Ribeiro,1000 - São Miguel Paulista',
+                             cep='05419-001',
                              url='www.each.usp.br')
         site.save()
         sites = Session().query(TouristicSite).all()
@@ -127,6 +129,7 @@ class HotelControllerTest(unittest.TestCase):
         #Asserting that Controller creates a Hotel
         params = {'Hotel--nome':'Pocilga ZL',
                                       'Hotel--endereco':'Av. Assis Ribeiro',
+                                      'Hotel--cep':'05419-001',
                                       'Hotel--regiao':HotelRegiao.LESTE,
                                       'Hotel--classificacao':5,
                                       'Hotel--finalidade':HotelFim.NEGOCIOS,
@@ -142,6 +145,7 @@ class HotelControllerTest(unittest.TestCase):
         controller = HotelController()
         hotel = Hotel(nome=u'Pocilga ZL',
                       endereco=u'Av. Assis Ribeiro, 1000',
+                      cep = '05419-001',
                       regiao=HotelRegiao.OESTE,
                       classificacao=5,
                       finalidade=HotelFim.NEGOCIOS,

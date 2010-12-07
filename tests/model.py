@@ -18,10 +18,14 @@ class TouristicSiteTest(unittest.TestCase):
                              value=0.0,
                              hours='8h-18h',
                              address=u'Av. Assis Ribeiro,1000 - São Miguel Paulista',
+                             cep='05419-001',
                              url='www.each.usp.br')
         site.save()
         site_saved = Session().query(TouristicSite).first()
         self.assertEquals(site,site_saved)
+        
+        self.assertEquals(-23.5577674,site_saved.latitude)
+        self.assertEquals(-46.7007218,site_saved.longitude)
         
     def test_touristic_site_field_set(self):
         site_fs = TouristicSiteFieldSet
@@ -72,7 +76,8 @@ class HotelTest(unittest.TestCase):
     def test_create_hotel(self):
         #Creating infrastrucrure
         hotel = Hotel(nome=u'Pocilga ZL',
-                      endereco=u'Av. Assis Ribeiro, 1000',
+                      endereco=u'Av. Pedroso de Morais, 1619',
+                      cep='05419-001',
                       regiao=HotelRegiao.OESTE,
                       classificacao=5,
                       finalidade=HotelFim.NEGOCIOS,
@@ -83,6 +88,10 @@ class HotelTest(unittest.TestCase):
         
         hotel_saved = Session().query(Hotel).all()[0]
         self.assertEquals(hotel,hotel_saved)
+        
+        self.assertEquals(-23.5577674,hotel_saved.latitude)
+        self.assertEquals(-46.7007218,hotel_saved.longitude)
+    
     
     def testCreateHotelForm(self):
         fs = HotelFieldSet
@@ -91,6 +100,7 @@ class HotelTest(unittest.TestCase):
         #This method must return the 5 last hotels in the system
         hotel = Hotel(nome=u'Pocilga ZL',
                       endereco=u'Av. Assis Ribeiro, 1000',
+                      cep='05419-001',
                       regiao=HotelRegiao.OESTE,
                       classificacao=5,
                       finalidade=HotelFim.NEGOCIOS,
@@ -100,6 +110,7 @@ class HotelTest(unittest.TestCase):
         hotel.save()
         hotel2 = Hotel(nome=u'Pocilga ZO',
                       endereco=u'Av. Assis Ribeiro, 1000',
+                      cep='05419-001',
                       regiao=HotelRegiao.OESTE,
                       classificacao=5,
                       finalidade=HotelFim.NEGOCIOS,
@@ -109,6 +120,7 @@ class HotelTest(unittest.TestCase):
         hotel2.save()
         hotel3 = Hotel(nome=u'Pocilga ZS',
                       endereco=u'Av. Assis Ribeiro, 1000',
+                      cep='05419-001',
                       regiao=HotelRegiao.OESTE,
                       classificacao=5,
                       finalidade=HotelFim.NEGOCIOS,
@@ -118,6 +130,7 @@ class HotelTest(unittest.TestCase):
         hotel3.save()
         hotel4 = Hotel(nome=u'Pocilga ZN',
                       endereco=u'Av. Assis Ribeiro, 1000',
+                      cep='05419-001',
                       regiao=HotelRegiao.OESTE,
                       classificacao=5,
                       finalidade=HotelFim.NEGOCIOS,
@@ -127,6 +140,6 @@ class HotelTest(unittest.TestCase):
         hotel4.save()
         
         hotels = get_last_hotels()
-        print hotels
+        
         self.assertEquals(len(hotels),4)
 unittest.main()

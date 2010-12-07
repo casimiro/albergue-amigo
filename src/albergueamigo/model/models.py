@@ -1,3 +1,6 @@
+# -*- coding: UTF-8 -*-
+import urllib2
+import simplejson as json
 from sqlalchemy import Column,String,Integer,Float,Date
 from sqlalchemy.orm import sessionmaker,scoped_session
 from sqlalchemy.ext.declarative import declarative_base
@@ -42,9 +45,16 @@ class TouristicSite(Base):
     value = Column(Float)
     hours = Column(String, nullable = False)
     address = Column(String, nullable = False)
+    cep = Column(String, nullable = False)
+    latitude = Column(Float,nullable = False)
+    longitude = Column(Float,nullable = False)
     url = Column(String)
     
     def save(self):
+        if self.latitude == None:
+            coord = _get_coordinates(self.cep)
+            self.latitude = coord['lat']
+            self.longitude = coord['lng']
         session = Session()
         session.add(self)
         session.commit()
@@ -76,6 +86,9 @@ class Hotel(Base):
     id = Column('id',Integer, primary_key=True)
     nome = Column('nome',String, nullable = False)
     endereco = Column('endereco',String, nullable = False)
+    cep = Column('cep',String, nullable = False)
+    latitude = Column(Float, nullable = False)
+    longitude = Column(Float, nullable = False)
     regiao = Column('regiao',String, nullable = False)
     classificacao = Column('classificacao',Integer, nullable = False)
     finalidade = Column('finalidade',String, nullable = False)
@@ -90,9 +103,22 @@ class Hotel(Base):
         return self.id == other.id
 
     def save(self):
+        if self.latitude == None:
+            coord = _get_coordinates(self.cep)
+            self.latitude = coord['lat']
+            self.longitude = coord['lng']
         session = Session()
         session.add(self)
         session.commit()
+
+def _get_coordinates(cep):
+    #This function get the coordinates for a 
+    #cep in são paulo
+    resp = urllib2.urlopen("http://maps.google.com/maps/api/geocode/json?address="+cep+"+S%C3%83O%20PAULO+SP&sensor=false")
+    payload = resp.read()    
+    data = json.loads(payload)
+    return data['results'][0]['geometry']['location']
+
 
 #This function returns the last 5 hotels stored in the system
 def get_last_hotels():

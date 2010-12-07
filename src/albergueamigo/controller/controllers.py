@@ -30,6 +30,7 @@ class TouristicSiteController(object):
                                  value=kwargs['TouristicSite--value'],
                                  hours=kwargs['TouristicSite--hours'],
                                  address=kwargs['TouristicSite--address'],
+                                 cep=kwargs['TouristicSite--cep'],
                                  url=kwargs['TouristicSite--url'])
             site.save()
             return self.index()
@@ -72,6 +73,7 @@ class HotelController(object):
         if 'Hotel--nome' in kwargs:
             hotel = Hotel(nome=kwargs['Hotel--nome'],
                          endereco=kwargs['Hotel--endereco'],
+                         cep=kwargs['Hotel--cep'],
                          regiao = kwargs['Hotel--regiao'],
                          classificacao = kwargs['Hotel--classificacao'],
                          finalidade=kwargs['Hotel--finalidade'],
