@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
 import urllib2
+import urllib
 import simplejson as json
 from sqlalchemy import Column,String,Integer,Float,Date
 from sqlalchemy.orm import sessionmaker,scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from formalchemy import FieldSet,Field,PasswordFieldRenderer
 from hashed_property import HashedProperty
+from distance import vinc_dist
 
 Session = scoped_session(sessionmaker())
 Base = declarative_base()
@@ -52,7 +54,7 @@ class TouristicSite(Base):
     
     def save(self):
         if self.latitude == None:
-            coord = _get_coordinates(self.cep)
+            coord = _get_coordinates(self.address,self.cep)
             self.latitude = coord['lat']
             self.longitude = coord['lng']
         session = Session()
@@ -104,21 +106,33 @@ class Hotel(Base):
 
     def save(self):
         if self.latitude == None:
-            coord = _get_coordinates(self.cep)
+            coord = _get_coordinates(self.endereco,self.cep)
             self.latitude = coord['lat']
             self.longitude = coord['lng']
         session = Session()
         session.add(self)
         session.commit()
 
-def _get_coordinates(cep):
+def _get_coordinates(address,cep):
     #This function get the coordinates for a 
     #cep in são paulo
-    resp = urllib2.urlopen("http://maps.google.com/maps/api/geocode/json?address="+cep+"+S%C3%83O%20PAULO+SP&sensor=false")
+    address = urllib.quote(address)
+    
+    resp = urllib2.urlopen("http://maps.google.com/maps/api/geocode/json?address="+address+"+"+cep+"+S%C3%83O%20PAULO+SP&sensor=false")
     payload = resp.read()    
     data = json.loads(payload)
     return data['results'][0]['geometry']['location']
 
+
+def get_touristic_sites_near_to(hotel,distance):
+    sites = Session().query(TouristicSite).all()
+    choosen = []
+    
+    for site in sites:
+        print vinc_dist(hotel.latitude,hotel.longitude,site.latitude,site.longitude)
+        if vinc_dist(hotel.latitude,hotel.longitude,site.latitude,site.longitude) <= distance:
+            choosen.append(site)
+    return choosen
 
 #This function returns the last 5 hotels stored in the system
 def get_last_hotels():

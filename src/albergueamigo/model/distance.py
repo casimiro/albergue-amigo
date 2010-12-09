@@ -41,7 +41,7 @@ import math
 # |                                                                     |
 # ---------------------------------------------------------------------- 
 
-def vinc_dist(  f,  a,  phi1,  lembda1,  phi2,  lembda2 ) :
+def vinc_dist(phi1,  lembda1,  phi2,  lembda2 ) :
         """ 
 
         Returns the distance between two geographic points on the ellipsoid
@@ -51,13 +51,20 @@ def vinc_dist(  f,  a,  phi1,  lembda1,  phi2,  lembda2 ) :
         Returns ( s, alpha12,  alpha21 ) as a tuple
 
         """
-
+        phi1 = math.radians(phi1)
+        phi2 = math.radians(phi2)
+        
+        lembda1 = math.radians(lembda1)
+        lembda2 = math.radians(lembda2)
+        
+        a = 6378137
+        f = 1/298.257223563
         if (abs( phi2 - phi1 ) < 1e-8) and ( abs( lembda2 - lembda1) < 1e-8 ) :
             return 0.0, 0.0, 0.0
   
         two_pi = 2.0*math.pi
 
-        b = a * (1.0 - f)
+        b = 6356752.314245
 
         TanU1 = (1-f) * math.tan( phi1 )
         TanU2 = (1-f) * math.tan( phi2 )
@@ -127,4 +134,4 @@ def vinc_dist(  f,  a,  phi1,  lembda1,  phi2,  lembda2 ) :
         if ( alpha21 > two_pi ) : 
                 alpha21 = alpha21 - two_pi
 
-        return s, alpha12,  alpha21 
+        return s
