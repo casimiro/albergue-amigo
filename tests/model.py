@@ -36,6 +36,12 @@ class TouristicSiteTest(unittest.TestCase):
         self.assertTrue('address' in keys)
         self.assertTrue('url' in keys)
         
+    def test_get_touristic_sites_near_to(self):
+        # The function get_touristic_sites_near_to
+        # receives lat,lng,region and a limit in meters
+        # which represents the max distance wished
+        pass
+    
 class UserTest(unittest.TestCase):
     
     def test_user_creation(self):
