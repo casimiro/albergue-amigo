@@ -13,11 +13,29 @@
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    var hotel = new google.maps.Marker({
+    var hotelMarker = new google.maps.Marker({
       position: hotel, 
       map: map, 
       title:"$hotel.nome"
 	});
+	
+	#for $i in range(len($nearby_sites.keys()))
+	#set $s = $nearby_sites.keys()[$i]
+	var pos$i = new google.maps.LatLng($s.latitude, $s.longitude);
+	var marker$i = new google.maps.Marker({
+	  icon: "/images/beerMarker.png",
+      position: pos$i, 
+      map: map, 
+      title:"$s.name"
+	});
+	
+	var content$i = "Hotel: $s.name<br>";
+	var infoWindow$i = new google.maps.InfoWindow({content: content$i});
+	(infoWindow$i).setPosition(pos$i);
+    (infoWindow$i).open(map);
+	
+	#end for
+	
 	var content = "Hotel: $hotel.nome<br> Classificaçao: $hotel.classificacao estrelas<br>"
 	var infoWindow = new google.maps.InfoWindow({content: content});
 	infoWindow.setPosition(hotel);
