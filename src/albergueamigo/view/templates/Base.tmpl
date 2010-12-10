@@ -19,8 +19,14 @@ Description: A two-column fixed-width template suitable for small business websi
 <meta name="description" content="" />
 <link href="/default.css" rel="stylesheet" type="text/css" />
 $head
+<script type="text/javascript">
+function runScripts() {
+	initialize();
+}
+</script>
+
 </head>
-<body onload="initialize()">
+<body onload="runScripts()">
 <div id="header">
 	<div id="logo">
 		<h1><a href="/">Albergue Amigo</a></h1>

@@ -38,6 +38,8 @@ class TouristicSiteTest(unittest.TestCase):
         self.assertTrue('hours' in keys)
         self.assertTrue('address' in keys)
         self.assertTrue('url' in keys)
+        self.assertFalse('latitude' in keys)
+        self.assertFalse('longitude' in keys)
         
     def test_get_touristic_sites_near_to(self):
         # The function get_touristic_sites_near_to
@@ -68,9 +70,12 @@ class TouristicSiteTest(unittest.TestCase):
                       url=u'www.pocilgazl.com') 
         hotel.save()
         
-        sites = get_touristic_sites_near_to(hotel,200)
-        self.assertTrue(site in sites)
-        self.assertFalse(site1 in sites)
+        distances = get_touristic_sites_near_to(hotel,200)
+        self.assertTrue(site in distances.keys())
+        self.assertFalse(site1 in distances.keys())
+        
+        #Asserting the distances
+        self.assertEquals(distances[site], 161.608)
         
 class UserTest(unittest.TestCase):
     
@@ -130,7 +135,11 @@ class HotelTest(unittest.TestCase):
     
     
     def testCreateHotelForm(self):
-        fs = HotelFieldSet
+        hotel_fs = HotelFieldSet
+        keys = hotel_fs.render_fields.keys()
+        
+        self.assertFalse('latitude' in keys)
+        self.assertFalse('longitude' in keys)
         
     def test_get_last_hotels(self):
         #This method must return the 5 last hotels in the system

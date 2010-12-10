@@ -13,7 +13,7 @@
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    var marker = new google.maps.Marker({
+    var hotel = new google.maps.Marker({
       position: hotel, 
       map: map, 
       title:"$hotel.nome"
@@ -32,4 +32,11 @@
 <p>Endereco: $hotel.endereco</p>
 <p>Classificacao: $hotel.classificacao</p>
 <div id="map_canvas" style="width: 500px; height: 480px;"></div>
+<br/>
+<h2>Sítios Turísticos Próximos</h2>
+<ul>
+#for $site,$dist in $nearby_sites.items()
+<li><b>$site.name</b> - $dist m</li>
+#end for
+</ul>
 #end def

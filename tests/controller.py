@@ -65,7 +65,7 @@ class TouristicSiteControllerTest(unittest.TestCase):
         site = TouristicSite(name='EACH-USP',
                              value=0.0,
                              hours='8h-18h',
-                             address=u'Av. Assis Ribeiro,1000 - São Miguel Paulista',
+                             address=u'Av. Pedroso de Morais, 1619',
                              cep='05419-001',
                              url='www.each.usp.br')
         site.save()
@@ -144,7 +144,7 @@ class HotelControllerTest(unittest.TestCase):
     def test_view_hotel(self):
         controller = HotelController()
         hotel = Hotel(nome=u'Pocilga ZL',
-                      endereco=u'Av. Assis Ribeiro, 1000',
+                      endereco=u'Av. Pedroso de Morais, 1619',
                       cep = '05419-001',
                       regiao=HotelRegiao.OESTE,
                       classificacao=5,
@@ -154,6 +154,7 @@ class HotelControllerTest(unittest.TestCase):
                       url=u'www.pocilgazl.com') 
         hotel.save()
         result = controller.view(hotel.id)
-        self.assertEquals(result,ViewHotel(searchList=[{'last_hotels':get_last_hotels(),'hotel':hotel}]).respond())
+        nearby_sites = get_touristic_sites_near_to(hotel,200)
+        self.assertEquals(result,ViewHotel(searchList=[{'nearby_sites':nearby_sites,'last_hotels':get_last_hotels(),'hotel':hotel}]).respond())
         
 unittest.main()

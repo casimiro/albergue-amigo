@@ -87,7 +87,8 @@ class HotelController(object):
     @cherrypy.expose
     def view(self, hotel_id):
         hotel = Session().query(Hotel).get(hotel_id)
-        return ViewHotel(searchList=[{'last_hotels':get_last_hotels(),'hotel':hotel}]).respond()
+        nearby_sites = get_touristic_sites_near_to(hotel, 200)
+        return ViewHotel(searchList=[{'nearby_sites':nearby_sites, 'last_hotels':get_last_hotels(),'hotel':hotel}]).respond()
     
     @cherrypy.expose
     def index(self):

@@ -235,4 +235,5 @@ a:hover {
 #footer p {
 	text-align: center;
 	font-size: 77%;
-}
+label {display:block;clear:both;}
+form, table {display:inline; margin:0px; padding:0px;}

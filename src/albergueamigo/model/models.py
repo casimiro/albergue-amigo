@@ -2,7 +2,7 @@
 import urllib2
 import urllib
 import simplejson as json
-from sqlalchemy import Column,String,Integer,Float,Date
+from sqlalchemy import Column,String,Integer,Float,Date,Unicode
 from sqlalchemy.orm import sessionmaker,scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from formalchemy import FieldSet,Field,PasswordFieldRenderer
@@ -43,10 +43,10 @@ class TouristicSite(Base):
     __tablename__ = 'site'
     
     id = Column('id',Integer, primary_key=True)
-    name = Column(String, nullable = False)
+    name = Column(Unicode, nullable = False)
     value = Column(Float)
-    hours = Column(String, nullable = False)
-    address = Column(String, nullable = False)
+    hours = Column(Unicode, nullable = False)
+    address = Column(Unicode, nullable = False)
     cep = Column(String, nullable = False)
     latitude = Column(Float,nullable = False)
     longitude = Column(Float,nullable = False)
@@ -65,7 +65,7 @@ class User(Base):
     __tablename__ = 'user'
     
     id = Column('id',Integer, primary_key=True)
-    name = Column(String, nullable = False)
+    name = Column(Unicode, nullable = False)
     username = Column(String)
     email = Column(String,nullable=False)
     password = Column(String(40), nullable=False)
@@ -86,8 +86,8 @@ class Hotel(Base):
     __tablename__ = 'hotel'
     
     id = Column('id',Integer, primary_key=True)
-    nome = Column('nome',String, nullable = False)
-    endereco = Column('endereco',String, nullable = False)
+    nome = Column(Unicode, nullable = False)
+    endereco = Column(Unicode, nullable = False)
     cep = Column('cep',String, nullable = False)
     latitude = Column(Float, nullable = False)
     longitude = Column(Float, nullable = False)
@@ -126,12 +126,12 @@ def _get_coordinates(address,cep):
 
 def get_touristic_sites_near_to(hotel,distance):
     sites = Session().query(TouristicSite).all()
-    choosen = []
+    choosen = {}
     
     for site in sites:
-        print vinc_dist(hotel.latitude,hotel.longitude,site.latitude,site.longitude)
-        if vinc_dist(hotel.latitude,hotel.longitude,site.latitude,site.longitude) <= distance:
-            choosen.append(site)
+        d = vinc_dist(hotel.latitude,hotel.longitude,site.latitude,site.longitude)
+        if d <= distance:
+            choosen[site] = d 
     return choosen
 
 #This function returns the last 5 hotels stored in the system
@@ -143,6 +143,7 @@ HotelFieldSet = FieldSet(Hotel)
 HotelFieldSet.append(Field('regiao').dropdown(options=HotelRegiao().get_values()))
 HotelFieldSet.append(Field('finalidade').dropdown(options=HotelFim().get_values()))
 HotelFieldSet.append(Field('tipo').dropdown(options=HotelTipo().get_values()))
+HotelFieldSet.configure(exclude=[HotelFieldSet.latitude,HotelFieldSet.longitude])
 
 #User's FieldSet
 UserFieldSet = FieldSet(User)
@@ -153,4 +154,4 @@ UserFieldSet.configure(exclude=[UserFieldSet.creation_date])
 
 #TouristicSite's FieldSet
 TouristicSiteFieldSet = FieldSet(TouristicSite)
-
+TouristicSiteFieldSet.configure(exclude=[TouristicSiteFieldSet.latitude,TouristicSiteFieldSet.longitude])

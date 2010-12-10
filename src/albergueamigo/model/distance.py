@@ -134,4 +134,4 @@ def vinc_dist(phi1,  lembda1,  phi2,  lembda2 ) :
         if ( alpha21 > two_pi ) : 
                 alpha21 = alpha21 - two_pi
 
-        return s
+        return round(s,3)
