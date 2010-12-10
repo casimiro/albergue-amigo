@@ -76,7 +76,26 @@ class TouristicSiteTest(unittest.TestCase):
         
         #Asserting the distances
         self.assertEquals(distances[site], 161.608)
+    
+class ServiceTest(unittest.TestCase):
+    
+    def test_service_creation(self):
+        service = Service(name="Cafeteria",
+                          address="Pc Omaguas, 34",
+                          cep='05419-020',
+                          hours='8h-21h')
+        service.save()
+        service_saved = Session().query(Service).first()
+        self.assertEquals(service, service_saved)
         
+        self.assertEquals(service.latitude,-23.5623732)
+        self.assertEquals(service.longitude,-46.6920555)
+        
+    def test_service_field_set(self):
+        service_fs = ServiceFieldSet
+        keys = service_fs.render_fields.keys()
+
+        self.assertTrue('name' in keys) 
 class UserTest(unittest.TestCase):
     
     def test_user_creation(self):

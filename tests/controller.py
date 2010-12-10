@@ -17,8 +17,8 @@ from albergueamigo.model.models import *
 from albergueamigo.controller.controllers import *
 
 #Creating infrastrucrure
-os.remove(':test.db')
-engine = create_engine('sqlite:///:test.db',echo=False)
+os.remove('test.db')
+engine = create_engine('sqlite:///test.db',echo=False)
 Session.configure(bind=engine)
 Base.metadata.create_all(engine)
 
@@ -136,10 +136,27 @@ class HotelControllerTest(unittest.TestCase):
                                       'Hotel--custo_diaria':20.0,
                                       'Hotel--tipo':HotelTipo.INDIVIDUAL, 
                                       'Hotel--url':''}
-        result = controller.edit(**params)
+        result = controller.edit(id=None,**params)
         hotel = session.query(Hotel).first()
         self.assertEquals(hotel.nome,'Pocilga ZL')
         self.assertEquals(result,ListHotels(searchList=[{'last_hotels':get_last_hotels(),'hotels':session.query(Hotel).all()}]).respond())
+    
+    def test_edit_hotel(self):
+        controller = HotelController()
+        hotel = Hotel(nome=u'Pocilga ZL',
+                      endereco=u'Av. Pedroso de Morais, 1619',
+                      cep = '05419-001',
+                      regiao=HotelRegiao.OESTE,
+                      classificacao=5,
+                      finalidade=HotelFim.NEGOCIOS,
+                      custo_diaria = 30.0,
+                      tipo=HotelTipo.FAMILIAR,
+                      url=u'www.pocilgazl.com') 
+        hotel.save()
+        result = controller.edit(id = hotel.id)
+        fs = HotelFieldSet
+        print hotel.id
+        self.assertEquals(result,EditHotel(searchList=[{'last_hotels':get_last_hotels(),'fs':fs.render()}]).respond())
     
     def test_view_hotel(self):
         controller = HotelController()

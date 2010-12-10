@@ -6,8 +6,11 @@
 
 #def body
 <h2>Lista de Hoteis</h2>
+<ul>
 #for $hotel in $hotels
+<li>
 <p><a href="/hotels/view/$hotel.id">$hotel.nome</a></p>
+</li>
 #end for
-
+<ul>
 #end def

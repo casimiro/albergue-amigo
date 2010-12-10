@@ -60,7 +60,27 @@ class TouristicSite(Base):
         session = Session()
         session.add(self)
         session.commit()
+
+class Service(Base):
+    __tablename__ = 'service'
     
+    id = Column(Integer,primary_key=True)
+    name = Column(Unicode, nullable = False)
+    hours = Column(Unicode, nullable = False)
+    address = Column(Unicode, nullable = False)
+    cep = Column(String, nullable = False)
+    latitude = Column(Float,nullable = False)
+    longitude = Column(Float,nullable = False)
+    
+    def save(self):
+        if self.latitude == None:
+            coord = _get_coordinates(self.address,self.cep)
+            self.latitude = coord['lat']
+            self.longitude = coord['lng']
+        session = Session()
+        session.add(self)
+        session.commit()
+        
 class User(Base):
     __tablename__ = 'user'
     
@@ -155,3 +175,7 @@ UserFieldSet.configure(exclude=[UserFieldSet.creation_date])
 #TouristicSite's FieldSet
 TouristicSiteFieldSet = FieldSet(TouristicSite)
 TouristicSiteFieldSet.configure(exclude=[TouristicSiteFieldSet.latitude,TouristicSiteFieldSet.longitude])
+
+#Service's FieldSet
+ServiceFieldSet = FieldSet(Service)
+ServiceFieldSet.configure(exclude=[ServiceFieldSet.latitude,ServiceFieldSet.longitude])
