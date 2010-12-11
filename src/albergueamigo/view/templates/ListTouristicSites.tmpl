@@ -6,9 +6,13 @@
 #end def
 
 #def body
-<h2>Lista de SÃ­tios TurÃ­sticos</h2>
+<h2>Lista de Sí­tios Turísticos</h2>
 #for $site in $sites
-<p><a href="/sites/view/$site.id">$site.name</a></p>
+<p><a href="/sites/view/$site.id">$site.name</a>
+#if $user is not None and $user.username == 'admin'
+ - <a href="/sites/edit/$site.id">Editar</a>
+#end if
+</p>
 #end for
 
 #end def

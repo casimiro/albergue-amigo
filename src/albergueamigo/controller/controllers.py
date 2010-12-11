@@ -3,6 +3,7 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 import cherrypy
+import Image
 import datetime
 from sqlalchemy import and_
 from albergueamigo.view.ListTouristicSites import ListTouristicSites
@@ -15,13 +16,14 @@ from albergueamigo.view.EditUser import EditUser
 from albergueamigo.view.ListHotels import ListHotels
 from albergueamigo.view.ViewHotel import ViewHotel
 from albergueamigo.model.models import *
+from shutil import copyfileobj
 
 class TouristicSiteController(object):
     
     @cherrypy.expose
     def index(self):
         site = Session().query(TouristicSite).all()
-        return ListTouristicSites(searchList=[{'last_hotels':get_last_hotels(),'sites':site}]).respond()
+        return ListTouristicSites(searchList=[{'last_hotels':get_last_hotels(),'sites':site,'user':get_logged_user()}]).respond()
     
     @cherrypy.expose
     def edit(self, **kwargs):
@@ -34,7 +36,7 @@ class TouristicSiteController(object):
                                  url=kwargs['TouristicSite--url'])
             site.save()
             return self.index()
-        return EditTouristicSite(searchList=[{'last_hotels':get_last_hotels(),'fs':TouristicSiteFieldSet.render()}]).respond()
+        return EditTouristicSite(searchList=[{'last_hotels':get_last_hotels(),'fs':TouristicSiteFieldSet.render(),'user':get_logged_user()}]).respond()
 
 class UserController(object):
     
@@ -51,7 +53,7 @@ class UserController(object):
                         cpf = kwargs['User--cpf'])
             user.save()
             return self.login()
-        return EditUser(searchList=[{'last_hotels':get_last_hotels(),'fs':UserFieldSet.render()}]).respond()
+        return EditUser(searchList=[{'last_hotels':get_last_hotels(),'fs':UserFieldSet.render(),'user':get_logged_user()}]).respond()
     
     @cherrypy.expose
     def login(self, **kwargs):
@@ -59,41 +61,69 @@ class UserController(object):
             user = Session.query(User).filter(and_(User.username==kwargs['username'],User.password==kwargs['password']))
             
             if user is not None and user.count() == 1:
-                return UserPage(searchList=[{'last_hotels':get_last_hotels(),'user':user.first()}]).respond()
+                cherrypy.session['user'] = user.first()
+                return Index(searchList=[{'last_hotels':get_last_hotels(),'user':get_logged_user()}]).respond()
             else:
                 return self.login()
                 
-        return UserLogin(searchList=[{'last_hotels':get_last_hotels()}]).respond()
+        return UserLogin(searchList=[{'last_hotels':get_last_hotels(),'user':get_logged_user()}]).respond()
+
+def resize_image(src):
+    img = Image.open(src)
+    lim = 500.0,480.0
+    dim = img.size
+    ratio = min(lim[0]/dim[0],lim[1]/dim[1])
+    print ratio
+    if ratio >= 1:
+        return
+    img2 = img.resize((dim[0]*ratio,dim[1]*ratio))
+    img2.save(src)
     
 class HotelController(object):
     """This class will handle the hotels HTTP requests """
     
+    def save_image(self, file, dist):
+        f = open(dist, 'wb')
+        data = file
+        data.seek(0) # just to ensure we're at the beginning
+        copyfileobj(fsrc=data, fdst=f, length=1024 * 8)
+        f.close()
+        resize_image(dist)
+    
     @cherrypy.expose
-    def edit(self, **kwargs):
-        if 'Hotel--nome' in kwargs:
-            hotel = Hotel(nome=kwargs['Hotel--nome'],
-                         endereco=kwargs['Hotel--endereco'],
-                         cep=kwargs['Hotel--cep'],
-                         regiao = kwargs['Hotel--regiao'],
-                         classificacao = kwargs['Hotel--classificacao'],
-                         finalidade=kwargs['Hotel--finalidade'],
-                         tipo =kwargs['Hotel--tipo'],
-                         custo_diaria=kwargs['Hotel--custo_diaria'],
-                         url=kwargs['Hotel--url'])
-            hotel.save()
+    def edit(self,id = None, **kwargs):
+        if id:
+            hotel = Session().query(Hotel).get(id)
+        else:
+            hotel = Hotel
+        if kwargs:
+            params = remove_prefix_from_dict(kwargs)
+            
+            if 'imagem' in params.keys():
+                file = params['imagem'].file
+                dist = 'static/images/'+str(get_last_hotel_id())+'.jpg'
+                self.save_image(file, dist)
+                params['imagem'] = dist[6:]
+            if id:
+                hotel.update(params)
+            else:
+                hotel = Hotel(**params)
+                hotel.save()
             return self.index()
-        return EditHotel(searchList=[{'last_hotels':get_last_hotels(),'fs':HotelFieldSet.render()}]).respond()
+        fs = HotelFieldSet
+        fs = fs.bind(hotel)
+        return EditHotel(searchList=[{'last_hotels':get_last_hotels(),'fs':fs.render(),'user':get_logged_user()}]).respond()
 
     @cherrypy.expose
     def view(self, hotel_id):
         hotel = Session().query(Hotel).get(hotel_id)
         nearby_sites = get_touristic_sites_near_to(hotel, 200)
-        return ViewHotel(searchList=[{'nearby_sites':nearby_sites, 'last_hotels':get_last_hotels(),'hotel':hotel}]).respond()
+        return ViewHotel(searchList=[{'nearby_sites':nearby_sites, 'last_hotels':get_last_hotels(),'hotel':hotel,'user':get_logged_user()}]).respond()
     
     @cherrypy.expose
     def index(self):
         hotels = Session().query(Hotel).all()
-        return ListHotels(searchList=[{'last_hotels':get_last_hotels(),'hotels':hotels}]).respond()
+        return ListHotels(searchList=[{'last_hotels':get_last_hotels(),'hotels':hotels,'user':get_logged_user()}]).respond()
     
 class RootController(object):
     """This class will handle root requests"""
@@ -103,8 +133,19 @@ class RootController(object):
     
     @cherrypy.expose
     def index(self):
-        return Index(searchList=[{'last_hotels':get_last_hotels()}]).respond()
-   
+        return Index(searchList=[{'last_hotels':get_last_hotels(),'user':get_logged_user()}]).respond()
+
+def get_logged_user():
+    if 'user' in cherrypy.session.keys():
+        return cherrypy.session['user']
+    return None
+
+def remove_prefix_from_dict(dict):
+    new_dict = {}
+    for k,v in dict.items():
+        new_dict[k[k.rfind('-')+1:]] = v
+    return new_dict
+
 if __name__ == '__main__':
     from sqlalchemy import create_engine
     #Creating infrastructure

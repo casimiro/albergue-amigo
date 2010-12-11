@@ -9,7 +9,11 @@
 <ul>
 #for $hotel in $hotels
 <li>
-<p><a href="/hotels/view/$hotel.id">$hotel.nome</a></p>
+<p><a href="/hotels/view/$hotel.id">$hotel.nome</a>
+#if $user is not None and $user.username == 'admin'
+ - <a href="/hotels/edit/$hotel.id">Editar</a>
+#end if
+</p>
 </li>
 #end for
 <ul>

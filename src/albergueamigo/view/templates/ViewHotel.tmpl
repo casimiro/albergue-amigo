@@ -49,6 +49,11 @@
 <h2>$hotel.nome</h2>
 <p>Endereco: $hotel.endereco</p>
 <p>Classificacao: $hotel.classificacao</p>
+#if $hotel.imagem is not None
+<p>Imagem do Hotel</p>
+<img src="$hotel.imagem" />
+#end if
+<p>Localização no Mapa</p>
 <div id="map_canvas" style="width: 500px; height: 480px;"></div>
 <br/>
 <h2>Sítios Turísticos Próximos</h2>

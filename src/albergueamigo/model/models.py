@@ -6,7 +6,7 @@ from sqlalchemy import Column,String,Integer,Float,Date,Unicode
 from sqlalchemy.orm import sessionmaker,scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from formalchemy import FieldSet,Field,PasswordFieldRenderer
-from hashed_property import HashedProperty
+from formalchemy.fields import FileFieldRenderer
 from distance import vinc_dist
 
 Session = scoped_session(sessionmaker())
@@ -105,25 +105,40 @@ class User(Base):
 class Hotel(Base):
     __tablename__ = 'hotel'
     
-    id = Column('id',Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     nome = Column(Unicode, nullable = False)
     endereco = Column(Unicode, nullable = False)
-    cep = Column('cep',String, nullable = False)
+    cep = Column(String, nullable = False)
     latitude = Column(Float, nullable = False)
     longitude = Column(Float, nullable = False)
-    regiao = Column('regiao',String, nullable = False)
-    classificacao = Column('classificacao',Integer, nullable = False)
-    finalidade = Column('finalidade',String, nullable = False)
-    custo_diaria = Column('custo_diaria',Float)
-    tipo = Column('tipo',String, nullable = False)
-    url = Column('url',String)
+    regiao = Column(String, nullable = False)
+    classificacao = Column(Integer, nullable = False)
+    finalidade = Column(String, nullable = False)
+    custo_diaria = Column(Float)
+    tipo = Column(String, nullable = False)
+    imagem = Column(String)
+    url = Column(String)
 
     def __repr__(self):
         return '<Hotel "%s">' % (self.__dict__)
 
     def __eq__(self, other):
         return self.id == other.id
-
+    
+    def update(self,d):
+        self.nome = d['nome']
+        self.endereco = d['endereco']
+        self.cep = d['cep']
+        self.regiao = d['regiao']
+        self.classificacao = d['classificacao']
+        self.finalidade = d['finalidade']
+        self.custo_diaria = d['custo_diaria']
+        self.tipo = d['tipo']
+        self.url = d['url']
+        if 'imagem' in d.keys():
+            self.imagem = d['imagem']
+        
+        self.save()
     def save(self):
         if self.latitude == None:
             coord = _get_coordinates(self.endereco,self.cep)
@@ -154,6 +169,11 @@ def get_touristic_sites_near_to(hotel,distance):
             choosen[site] = d 
     return choosen
 
+def get_last_hotel_id():
+    r = Session().query(Hotel.id).order_by(Hotel.id)[0][0]
+    print r
+    return r
+
 #This function returns the last 5 hotels stored in the system
 def get_last_hotels():
     return Session().query(Hotel).all()[-5:]
@@ -163,6 +183,7 @@ HotelFieldSet = FieldSet(Hotel)
 HotelFieldSet.append(Field('regiao').dropdown(options=HotelRegiao().get_values()))
 HotelFieldSet.append(Field('finalidade').dropdown(options=HotelFim().get_values()))
 HotelFieldSet.append(Field('tipo').dropdown(options=HotelTipo().get_values()))
+HotelFieldSet.append(Field(name='imagem').with_renderer(FileFieldRenderer))
 HotelFieldSet.configure(exclude=[HotelFieldSet.latitude,HotelFieldSet.longitude])
 
 #User's FieldSet

@@ -142,6 +142,7 @@ class HotelTest(unittest.TestCase):
                       classificacao=5,
                       finalidade=HotelFim.NEGOCIOS,
                       custo_diaria = 30.0,
+                      imagem = '/imagens/1.jpg',
                       tipo=HotelTipo.FAMILIAR,
                       url=u'www.pocilgazl.com') 
         hotel.save()
@@ -152,7 +153,30 @@ class HotelTest(unittest.TestCase):
         self.assertEquals(-23.5590562,hotel_saved.latitude)
         self.assertEquals(-46.6982242,hotel_saved.longitude)
     
-    
+    def test_update_hotel(self):
+        hotel = Hotel(nome=u'Pocilga ZL',
+                      endereco=u'Av. Pedroso de Morais, 1619',
+                      cep='05419-001',
+                      regiao=HotelRegiao.OESTE,
+                      classificacao=5,
+                      finalidade=HotelFim.NEGOCIOS,
+                      custo_diaria = 30.0,
+                      tipo=HotelTipo.FAMILIAR,
+                      url=u'www.pocilgazl.com') 
+        hotel.save()
+        params = {"nome":'Pocilga Nova',
+                  'endereco':'Rua Fradique Coutinho, 1378',
+                  'cep':'05416-001',
+                  'regiao':HotelRegiao.SUL,
+                  'classificacao':3,
+                  'finalidade':HotelFim.LAZER,
+                  'custo_diaria':20,
+                  'tipo':HotelTipo.INDIVIDUAL,
+                  'url':''}
+        hotel.update(params)
+        
+        self.assertEquals(hotel.nome,'Pocilga Nova')
+        self.assertEquals(hotel.cep, '05416-001')
     def testCreateHotelForm(self):
         hotel_fs = HotelFieldSet
         keys = hotel_fs.render_fields.keys()

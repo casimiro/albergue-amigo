@@ -37,6 +37,7 @@ function runScripts() {
 			<li class="active"><a href="/" accesskey="H" title="Home"><b>H</b>ome</a></li>
 			<li><a href="/hotels/" accesskey="E" title="Encontre seu canto"><b>E</b>ncontre seu canto</a></li>
 			<li><a href="/sites/" accesskey="P" title="Pocilgas Turisticas"><b>P</b>ocilgas Turisticas</a></li>
+			<li><a href="/services/" accesskey="S" title="Serviços"><b>S</b>erviços</a></li>
 		</ul>
 	</div>
 </div>
@@ -46,6 +47,15 @@ function runScripts() {
 	</div>
 	<!-- end #content -->
 	<div id="sidebar">
+		<div id="news" class="boxed1">
+		<h2 class="title">Acesso</h2>
+		#if $user is not None:
+		<p>Bem vindo, $user.name</p>
+		#else
+		<p>Caro usuário, efetue login<a href="/users/login"> aqui</a></p>
+		<p>Se você não é registrado <a href="/users/edit">clique aqui</a></p>
+		#end if
+		</div>
 		<div id="news" class="boxed1">
 			<h2 class="title">Últimos Hoteis</h2>
 			<div class="content">
