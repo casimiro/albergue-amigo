@@ -15,4 +15,7 @@
 </p>
 #end for
 
+#if $user is not None and $user.username == 'admin'
+<p>Clique <a href="/sites/edit">aqui</a> para adicionar um sítio turístico</p>
+#end if
 #end def

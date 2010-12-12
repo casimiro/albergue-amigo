@@ -51,6 +51,7 @@ function runScripts() {
 		<h2 class="title">Acesso</h2>
 		#if $user is not None:
 		<p>Bem vindo, $user.name</p>
+		<p><a href="/users/logout">Sair</a></p>
 		#else
 		<p>Caro usuário, efetue login<a href="/users/login"> aqui</a></p>
 		<p>Se você não é registrado <a href="/users/edit">clique aqui</a></p>

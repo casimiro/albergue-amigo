@@ -1,0 +1,20 @@
+#encoding UTF-8
+#from Base import Base
+#extends Base
+
+#def head
+#end def
+
+#def body
+<h2>Lista de Serviços</h2>
+#for $service in $services
+<p><a href="/services/view/$service.id">$service.name</a>
+#if $user is not None and $user.username == 'admin'
+ - <a href="/services/edit/$service.id">Editar</a>
+#end if
+</p>
+#end for
+#if $user is not None and $user.username == 'admin'
+ <p>Clique <a href="/services/edit">aqui</a> para cadastrar um serviço</p>
+#end if
+#end def

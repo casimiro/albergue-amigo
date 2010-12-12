@@ -17,4 +17,8 @@
 </li>
 #end for
 <ul>
+
+#if $user is not None and $user.username == 'admin'
+<p>Clique <a href="/hotels/edit/">aqui</a> para adicionar um hotel</p>
+#end if
 #end def

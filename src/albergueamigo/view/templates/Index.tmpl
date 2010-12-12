@@ -9,54 +9,46 @@
 <div id="welcome" class="boxed2">
 			<h1 class="title">Bem vindo Mendigo!</h1>
 			<div class="content">
-				<p><strong>Albergue Amigo</strong> é um sistema de busca de hoteis/albergues/caixa de fóosforo e afins. Neste site você vai encontrar o canto certo para cair bêbado! AlÃ©m disso, para cada pocilga mostraremos sua localizaÃ§Ã£o em mapa e as pocilgas ao redor. <em><strong>Aproveite! :)</strong></em></p>
+				<p><strong>Albergue Amigo</strong> é um sistema de busca de hoteis/albergues/caixa de fóosforo e afins. Neste site você vai encontrar o canto certo para cair bêbado! Além disso, para cada pocilga mostraremos sua localização em mapa e as pocilgas ao redor. <em><strong>Aproveite! :)</strong></em></p>
 			</div>
 		</div>
 		<div id="sample1" class="boxed3">
 			<h2 class="title">Pocilgas ZL</h2>
 			<div class="content">
-				<ul>
-					<li><a href="#">Mauris vulputate dolor sit amet</a></li>
-					<li><a href="#">Nulla luctus eleifend purus</a></li>
-					<li><a href="#">Praesent scelerisque lorem</a></li>
-					<li><a href="#">Ut nonummy rutrum sem</a></li>
-					<li><a href="#">Pellentesque tempus quam</a></li>
-					<li><a href="#">Fusce ultrices fringilla metus</a></li>
-					<li><a href="#">Praesent mattis condimentuml</a></li>
-				</ul>
+				<ol>
+					#for $hotel in $zl
+					<li><a href="/hotels/view/$hotel.id">$hotel.nome</a></li>
+					#end for
+				</ol>
 			</div>
 		</div>
 		<div id="sample2" class="boxed3">
 			<h2 class="title">Pocilgas ZN</h2>
 			<div class="content">
 				<ol>
-					<li><a href="#">In posuere eleifend odio quisque semper augue mattis wisi maecenas ligula.</a></li>
-					<li><a href="#">Donec leo, vivamus fermentum nibh in augue praesent.</a></li>
-					<li><a href="#">Quisque dictum integer nisl risus sagittis convallis rutrum.</a></li>
+					#for $hotel in $zn
+					<li><a href="/hotels/view/$hotel.id">$hotel.nome</a></li>
+					#end for
 				</ol>
 			</div>
 		</div>
 		<div id="sample1" class="boxed3">
 			<h2 class="title">Pocilgas ZS</h2>
 			<div class="content">
-				<ul>
-					<li><a href="#">Mauris vulputate dolor sit amet</a></li>
-					<li><a href="#">Nulla luctus eleifend purus</a></li>
-					<li><a href="#">Praesent scelerisque lorem</a></li>
-					<li><a href="#">Ut nonummy rutrum sem</a></li>
-					<li><a href="#">Pellentesque tempus quam</a></li>
-					<li><a href="#">Fusce ultrices fringilla metus</a></li>
-					<li><a href="#">Praesent mattis condimentuml</a></li>
-				</ul>
+				<ol>
+					#for $hotel in $zs
+					<li><a href="/hotels/view/$hotel.id">$hotel.nome</a></li>
+					#end for
+				</ol>
 			</div>
 		</div>
 		<div id="sample2" class="boxed3">
 			<h2 class="title">Pocilgas ZO</h2>
 			<div class="content">
 				<ol>
-					<li><a href="#">In posuere eleifend odio quisque semper augue mattis wisi maecenas ligula.</a></li>
-					<li><a href="#">Donec leo, vivamus fermentum nibh in augue praesent.</a></li>
-					<li><a href="#">Quisque dictum integer nisl risus sagittis convallis rutrum.</a></li>
+					#for $hotel in $zo
+					<li><a href="/hotels/view/$hotel.id">$hotel.nome</a></li>
+					#end for
 				</ol>
 			</div>
 		</div>

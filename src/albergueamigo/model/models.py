@@ -72,6 +72,9 @@ class Service(Base):
     latitude = Column(Float,nullable = False)
     longitude = Column(Float,nullable = False)
     
+    def __repr__(self):
+        return '<Service "%s">' % (self.__dict__)
+    
     def save(self):
         if self.latitude == None:
             coord = _get_coordinates(self.address,self.cep)
@@ -124,21 +127,7 @@ class Hotel(Base):
 
     def __eq__(self, other):
         return self.id == other.id
-    
-    def update(self,d):
-        self.nome = d['nome']
-        self.endereco = d['endereco']
-        self.cep = d['cep']
-        self.regiao = d['regiao']
-        self.classificacao = d['classificacao']
-        self.finalidade = d['finalidade']
-        self.custo_diaria = d['custo_diaria']
-        self.tipo = d['tipo']
-        self.url = d['url']
-        if 'imagem' in d.keys():
-            self.imagem = d['imagem']
         
-        self.save()
     def save(self):
         if self.latitude == None:
             coord = _get_coordinates(self.endereco,self.cep)
@@ -180,11 +169,12 @@ def get_last_hotels():
 
 #Hotel's FieldSet
 HotelFieldSet = FieldSet(Hotel)
-HotelFieldSet.append(Field('regiao').dropdown(options=HotelRegiao().get_values()))
-HotelFieldSet.append(Field('finalidade').dropdown(options=HotelFim().get_values()))
-HotelFieldSet.append(Field('tipo').dropdown(options=HotelTipo().get_values()))
 HotelFieldSet.append(Field(name='imagem').with_renderer(FileFieldRenderer))
-HotelFieldSet.configure(exclude=[HotelFieldSet.latitude,HotelFieldSet.longitude])
+HotelFieldSet.configure(
+                        exclude=[HotelFieldSet.latitude,HotelFieldSet.longitude],
+                        options=[HotelFieldSet.regiao.dropdown(options=HotelRegiao().get_values()),
+                                 HotelFieldSet.finalidade.dropdown(options=HotelFim().get_values()),
+                                 HotelFieldSet.tipo.dropdown(options=HotelTipo().get_values())])
 
 #User's FieldSet
 UserFieldSet = FieldSet(User)
